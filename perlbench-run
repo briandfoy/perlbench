@@ -6,12 +6,12 @@ require 5.002;
 use strict;
 
 $| = 1;
-my $VERBOSE = 0;
 
-if (@ARGV && $ARGV[0] =~ /^-d$/) {
-   shift;
-   $VERBOSE = 1;
-}
+use Getopt::Std;
+use vars qw($opt_v $opt_c $opt_t $opt_s);
+getopts("vc:t:s") or usage();
+
+my $VERBOSE = $opt_v;
 
 my @perls;
 for (@ARGV) {
@@ -25,35 +25,42 @@ for (@ARGV) {
 	warn "$_ does not appear to be a working perl\n";
 	next;
    }
-   push(@perls, [$_, $1+0]);
+   push(@perls, {path    => $_,
+                 version => $1+0
+                });
 }
 
-die "Usage: bench <perl>...\n" unless @perls;
+usage() unless @perls;
 
 # Show perl configurations
 my $no = "A";
 my $p;
 for $p (@perls)
 {
-    my($perl, $version) = @$p;
-    print "$no) perl-$version\n";
-	   printf "\t%-10s = %s\n", "path", $perl;
-    if ($version >= 5) {
+    print "\n" unless $no eq "A";
+    print "$no) perl-$p->{version}\n";
+	   printf "\t%-11s = %s\n", "path", $p->{path};
+    if ($p->{version} >= 5) {
 	# The perl should have Configure support.  Try to extract
 	# compiler info.
-	my $prog = 'use Config; Config::config_vars(qw(cc optimize))';
-        open(CONFIG, "$perl -e '$prog'|") or die;
+	my $prog = 'use Config; Config::config_vars(qw(cc optimize ccflags usemymalloc))';
+        open(CONFIG, "$p->{path} -e '$prog'|") or die;
 	while (<CONFIG>) {
 	   next unless /^(\w+)='([^']+)'/;  #' #
-	   printf "\t%-10s = %s\n", $1, $2;
+           $p->{$1} = $2;
+	   printf "\t%-11s = %s\n", $1, $2;
         }
     }
     $no++;
 }
 
-my $factor = `$^X cpu_factor`;
-chomp($factor);
-die "Can't calculate cpu speed factor" unless $factor;
+my $factor = $opt_c;
+unless ($factor) {
+    $factor = `$^X cpu_factor`;
+    chomp($factor);
+    die "Can't calculate cpu speed factor" unless $factor;
+}
+
 print "\nCPU SPEED FACTOR = $factor\n" if $VERBOSE;
 
 # Try to run tests
@@ -63,27 +70,45 @@ my @tests;
 
 use File::Find;
 find(sub { /\.t$/ && push(@tests, $File::Find::name) }, "t");
+if ($opt_t) {
+    @tests = grep /$opt_t/o, @tests;
+}
+@tests = sort @tests;
+
+# Try to run the empty test in order to time the loop
+for $p (@perls) {
+    my $perl = $p->{path};
+    open(P, "$perl empty.t $factor|") or die;
+    while (<P>) {
+        next unless /^CYCLES\/SEC:\s*(\S+)/;
+        $p->{empty_cycles} = int($1);
+	print if $VERBOSE;
+    }
+    close(P);
+    die "Could not determinces empty test speed for $perl"
+        unless  $p->{empty_cycles};
+    $p->{point_sum} = 0;
+}
 
 unless ($VERBOSE) {
     $no = "A";
     print "\n";
-    print " " x 15;
+    print " " x 20;
     for $p (@perls) {
 	printf "%8s", $no;
 	$no++;
     }
     print "\n";
 
-    print " " x 15;
+    print " " x 20;
     for $p (@perls) {
 	printf "%8s", "----";
     }
     print "\n";
-    
 }
 
 my $test;
-for $test (sort @tests) {
+for $test (@tests) {
     unless (open(T, $test)) {
 	warn "Can't open $test: $!";
 	next;
@@ -111,24 +136,24 @@ for $test (sort @tests) {
     }
 
     my $name = $test;
-    $name =~ s,.*/,,;  # basename
+    $name =~ s,^t/,,;
     $name =~ s,\.t$,,;
-    printf "%-15s", $name unless $VERBOSE;
+    printf "%-20s", $name unless $VERBOSE;
 
     my $scale;
     my $p;
     for $p (@perls) {
-        my($perl, $version) = @$p;
-	if ($version < $prop{'require'}) {
+        my $perl = $p->{path};
+	if ($p->{version} < $prop{'require'}) {
 	    # Can't run test
 	    if ($VERBOSE) {
-		print "Perl-$version can't run the test\n";
+		print "Perl-$p->{version} can't run the test\n";
 	    } else {
 		printf "%8s", "N/A";
 	    }
 	    next;
 	}
-        my $cmd = "$perl $test $factor";
+        my $cmd = "$perl $test $factor $p->{empty_cycles}";
 	my $points = 0;
         print "Running '$cmd'...\n" if $VERBOSE;
 	open(P, "$cmd|") or die;
@@ -142,11 +167,32 @@ for $test (sort @tests) {
 
 	unless ($VERBOSE) {
 	    # present results
-	    unless (defined($scale)) {
-		$scale = 100 / $points;
+	    unless ($opt_s) {
+		unless (defined $scale) {
+		    $scale = 100 / $points;
+		}
+		$points *= $scale;
 	    }
-	    printf "%8.0f", $points*$scale;
+	    printf "%8.0f", $points;
+	    $p->{point_sum} += $points;
 	}
     }
     print "\n" unless $VERBOSE;
 }
+
+unless ($VERBOSE) {
+    print "\n";
+    printf "%-20s", "AVERAGE";
+    for $p (@perls) {
+        printf "%8.0f", $p->{point_sum} / scalar(@tests);
+    }
+    print "\n";
+}
+
+
+sub usage
+{
+    $0 =~ s,.*/,,;
+    die "Usage: $0 [options] <perl1> <perl2>...\n";
+}
+

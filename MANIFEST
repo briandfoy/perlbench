@@ -1,5 +1,15 @@
+MANIFEST
+Makefile.PL
+README
 bench
 benchlib.pl
 cpu_factor
 t/arith.t
+t/array.t
+t/call.t
+t/call-empty.t
+t/index-const.t
+t/index-var.t
+t/match.t
+t/method.t
 t/string.t

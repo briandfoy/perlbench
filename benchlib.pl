@@ -20,19 +20,23 @@ sub main'runtest
     $point_factor = 1000 unless $point_factor;
     $code = <<EOT1 . $code . <<'EOT2';
 \$before_r = time;
-(\$before_u, \$before_s) = times;
+(\$before_u, \$before_s, $before_cu, $before_cs) = times;
 for (\$i = 0; \$i < $scale; \$i++) {
    package main;
    #---- test code ----
 EOT1
    #-------------------
 }
-($after_u, $after_s) = times;
+($after_u, $after_s, $after_cu, $after_cs) = times;
 $after_r = time;
-$used = $after_u - $before_u;
+
+$user   = ($after_u - $before_u) + ($after_cu - $before_cu);
+$system = ($after_s - $before_s) + ($after_cs - $before_cs);
+$used   = $user + $system;
+
 print "CYCLES: $scale\n";
-print "USER TIME: $used\n";
-print "SYSTEM TIME: ", $after_s - $before_s, "\n";
+print "USER TIME: $user\n";
+print "SYSTEM TIME: $system\n";
 print "REAL TIME: ", $after_r - $before_r, "\n";
 if ($used > 0.1) {
     print "CYCLES/SEC: ", $scale / $used, "\n";
@@ -41,7 +45,7 @@ if ($used > 0.1) {
 	$p = $loop_overhead / $used * 100;
         printf "LOOP OVERHEAD PERCENTAGE: %.1f\n", $p;
 	$used -= $loop_overhead;
-	print "ADJUSTED USER TIME: $used\n";
+	print "ADJUSTED USED TIME: $used\n";
     }
     print "BENCH POINTS: ", $point_factor / $used, "\n";
 }

@@ -1,6 +1,6 @@
 #!perl
 
-# Name: for (1 .. 10_000) loop
+# Name: for (1 .. $x) loop
 # Require: 4
 # Desc:
 #
@@ -8,9 +8,11 @@
 
 require 'benchlib.pl';
 
-&runtest(0.02, <<'ENDTEST');
+$x = 300;
 
-    for (1 .. 10_000) {
+&runtest(1, <<'ENDTEST');
+
+    for (1 .. $x) {
 	$foo = $_;
     }
 

@@ -53,6 +53,20 @@ if ($used > 0.1) {
     print "BENCH POINTS: ", $point_factor / $used, "\n";
 }
 EOT2
+
+    if ($] >= 5.002) {
+	$code = <<'EOT' . $code;
+BEGIN {
+    # If Time::HiRes is available, we can getter better resolution
+    eval {
+        require Time::HiRes;
+        Time::HiRes->import('time');
+    };
+}
+
+EOT
+    }
+
     print $code if $main'debug;
     eval $code;
     if ($@) {

@@ -46,3 +46,5 @@ t/string/htmlparser.t
 t/string/index-const.t
 t/string/index-var.t
 t/string/ipol.t
+t/string/tr.t
+

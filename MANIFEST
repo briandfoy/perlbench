@@ -37,6 +37,7 @@ t/loop/while.t
 t/re/const.t
 t/re/w.t
 t/startup/fewmod.t
+t/startup/lotsofsub.t
 t/startup/noprog.t
 t/string/base64.t
 t/string/htmlparser.t

@@ -1,4 +1,4 @@
-#!/local/perl/bin/perl
+#!/usr/bin/perl
 
 if (@ARGV && $ARGV[0] =~ /^-v$/) {
    shift;

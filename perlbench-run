@@ -1,0 +1,107 @@
+#!/local/perl/bin/perl -w
+
+require 5.002;
+use strict;
+
+$| = 1;
+my $VERBOSE = 0;
+
+my @perls;
+
+for (@ARGV) {
+   unless (-x $_) {
+	warn "Not executable $_\n";
+	next;
+   }
+   my $version = `$_ -e 'print "This is perl ", \$]+0, "\n"'`;
+   chomp $version;
+   unless ($version =~ /^This is perl (\d+.\d+)/) {
+	warn "$_ does not appear to be a working perl\n";
+	next;
+   }
+   push(@perls, [$_, $1+0]);
+}
+
+die "Usage: bench <perl>...\n" unless @perls;
+
+# Show perl configurations
+my $no = "A";
+my $p;
+for $p (@perls)
+{
+    my($perl, $version) = @$p;
+    print "$no) perl-$version\n";
+	   printf "\t%-10s = %s\n", "path", $perl;
+    if ($version >= 5) {
+	# The perl should have Configure support.  Try to extract
+	# compiler info.
+	my $prog = 'use Config; Config::config_vars(qw(cc optimize))';
+        open(CONFIG, "$perl -e '$prog'|") or die;
+	while (<CONFIG>) {
+	   next unless /^(\w+)='([^']+)'/;  #' #
+	   printf "\t%-10s = %s\n", $1, $2;
+        }
+    }
+    $no++;
+}
+
+my $factor = `$^X cpu_factor`;
+chomp($factor);
+die "Can't calculate cpu speed factor" unless $factor;
+print "\nCPU SPEED FACTOR = $factor\n" if $VERBOSE;
+
+# Try to run tests
+die "No test directory found" unless -d 't';
+
+my @tests;
+
+use File::Find;
+find(sub { /\.t$/ && push(@tests, $File::Find::name) }, "t");
+
+unless ($VERBOSE) {
+    $no = "A";
+    print "\n";
+    print " " x 15;
+    for $p (@perls) {
+	printf "%8s", $no;
+	$no++;
+    }
+    print "\n";
+}
+
+my $test;
+for $test (@tests) {
+    unless (open(T, $test)) {
+	warn "Can't open $test: $!";
+	next;
+    }
+    my $lines = 10;
+    while (<T>) {
+	last unless $lines--;
+	#print;
+    }
+    close(T);
+
+    my $name = $test;
+    $name =~ s,.*/,,;  # basename
+    $name =~ s,\.t$,,;
+    printf "%-15s", $name unless $VERBOSE;
+
+    my $p;
+    for $p (@perls) {
+        my($perl, $version) = @$p;
+        my $cmd = "$perl $test $factor";
+	my $points = 0;
+        print "Running '$cmd'...\n" if $VERBOSE;
+	open(P, "$cmd|") or die;
+	while (<P>) {
+	    print ">>> $_" if $VERBOSE;
+	    if (/^BENCH POINTS:\s+(\S+)/) {
+		$points = $1;
+	    }
+	}
+	close(P);
+	printf "%8.0f", $points unless $VERBOSE;
+    }
+    print "\n" unless $VERBOSE;
+}

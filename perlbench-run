@@ -124,7 +124,7 @@ for $p (@perls) {
 	print if $VERBOSE;
     }
     close(P);
-    die "Could not determinces empty test speed for $p->{path}"
+    die "Could not determine empty test speed for $p->{path}"
         unless  $p->{empty_cycles};
     $p->{point_sum} = 0;
 }

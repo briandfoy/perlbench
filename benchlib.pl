@@ -57,7 +57,7 @@ EOT2
     if ($] >= 5.002) {
 	$code = <<'EOT' . $code;
 BEGIN {
-    # If Time::HiRes is available, we can getter better resolution
+    # If Time::HiRes is available, we can get better resolution
     eval {
         require Time::HiRes;
         Time::HiRes->import('time');

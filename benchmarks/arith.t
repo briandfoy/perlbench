@@ -1,6 +1,8 @@
 #!perl
 
-# This test tries some mixed arithmetics
+# Name: Mixed arithmetics
+# Require: 4
+# Desc:
 
 require 'benchlib.pl';
 

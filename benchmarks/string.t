@@ -1,3 +1,5 @@
+#!perl
+
 # Name: String interpolation
 # Require: 4
 # Desc:

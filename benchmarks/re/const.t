@@ -10,8 +10,14 @@ require 'benchlib.pl';
 
 $a = ("-" x 100) . "foo" . ("-" x 100);
 
-&runtest(100, <<'ENDTEST');
+&runtest(25, <<'ENDTEST');
 
-   $a =~ /foo/
+   $a =~ /foo/;
+   $a =~ /---/;
+   $a =~ /bar/;
+
+   $a =~ /foo/;
+   $a =~ /---/;
+   $a =~ /bar/;
 
 ENDTEST

@@ -1,0 +1,8 @@
+^MANIFEST.SKIP$
+^Makefile$
+^pm_to_blib$
+^.cvsignore$
+CVS/
+^blib
+~$
+

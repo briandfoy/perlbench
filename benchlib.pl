@@ -20,7 +20,7 @@ sub main'runtest
     $point_factor = 1000 unless $point_factor;
     $code = <<EOT1 . $code . <<'EOT2';
 \$before_r = time;
-(\$before_u, \$before_s, $before_cu, $before_cs) = times;
+(\$before_u, \$before_s, \$before_cu, \$before_cs) = times;
 for (\$i = 0; \$i < $scale; \$i++) {
    package main;
    #---- test code ----
@@ -32,12 +32,14 @@ $after_r = time;
 
 $user   = ($after_u - $before_u) + ($after_cu - $before_cu);
 $system = ($after_s - $before_s) + ($after_cs - $before_cs);
+$real   = ($after_r - $before_r);
 $used   = $user + $system;
 
 print "CYCLES: $scale\n";
 print "USER TIME: $user\n";
 print "SYSTEM TIME: $system\n";
-print "REAL TIME: ", $after_r - $before_r, "\n";
+print "REAL TIME: $real\n";
+printf "CPU: %.0f%%\n", 100*$used/$real;
 if ($used > 0.1) {
     print "CYCLES/SEC: ", $scale / $used, "\n";
     if (defined $empty_cycles_per_sec) {

@@ -1,5 +1,7 @@
 #!/local/perl/bin/perl -w
 
+# $Id$
+
 require 5.002;
 use strict;
 

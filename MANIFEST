@@ -27,10 +27,6 @@ t/hash/foreach-sort.t
 t/hash/foreach.t
 t/hash/get.t
 t/hash/set.t
-t/match/index-const.t
-t/match/index-var.t
-t/match/re-const.t
-t/match/re-w.t
 t/re/const.t
 t/re/w.t
 t/startup/fewmod.t

@@ -4,8 +4,30 @@
 
 require 5.002;
 use strict;
-
 $| = 1;
+
+package Perl;
+
+sub new
+{
+    my($class, $path, $version) = @_;
+    bless { path => $path, version => $version }, $class;
+}
+
+sub cmd
+{
+    my $self = shift;
+    my $path = $self->{path};
+    (my $pdir = $path) =~ s,/[^/]+$,/,;
+    if (-d "$pdir/lib") {
+        # uninstalled perl
+	"$path -I $pdir/lib"
+    } else {
+	$path;
+    }
+}
+
+package main;
 
 use Getopt::Std;
 use vars qw($opt_v $opt_c $opt_t $opt_s);
@@ -16,18 +38,16 @@ my $VERBOSE = $opt_v;
 my @perls;
 for (@ARGV) {
    unless (-x $_) {
-	warn "Not executable $_\n";
+	warn "$_ is not executable, skipping.\n";
 	next;
    }
    my $version = `$_ -e 'print "This is perl ", \$]+0, "\n"'`;
    chomp $version;
    unless ($version =~ /^This is perl (\d+.\d+)/) {
-	warn "$_ does not appear to be a working perl\n";
+	warn "$_ does not appear to be a working perl, skipping.\n";
 	next;
    }
-   push(@perls, {path    => $_,
-                 version => $1+0
-                });
+   push(@perls, Perl->new($_, $1+0));
 }
 
 usage() unless @perls;
@@ -39,12 +59,12 @@ for $p (@perls)
 {
     print "\n" unless $no eq "A";
     print "$no) perl-$p->{version}\n";
-	   printf "\t%-11s = %s\n", "path", $p->{path};
+    printf "\t%-11s = %s\n", "path", $p->{path};
     if ($p->{version} >= 5) {
 	# The perl should have Configure support.  Try to extract
 	# compiler info.
 	my $prog = 'use Config; Config::config_vars(qw(cc optimize ccflags usemymalloc))';
-        open(CONFIG, "$p->{path} -e '$prog'|") or die;
+        open(CONFIG, $p->cmd." -e '$prog'|") or die;
 	while (<CONFIG>) {
 	   next unless /^(\w+)='([^']+)'/;  #' #
            $p->{$1} = $2;
@@ -77,16 +97,17 @@ if ($opt_t) {
 
 # Try to run the empty test in order to time the loop
 for $p (@perls) {
-    my $perl = $p->{path};
     print "Timing empty loop for perl-$p->{version}\n" if $VERBOSE;
-    open(P, "$perl empty.t $factor|") or die;
+    my $cmd = $p->cmd . " empty.t $factor";
+    print "Running '$cmd'...\n" if $VERBOSE;
+    open(P, "$cmd|") or die;
     while (<P>) {
         next unless /^CYCLES\/SEC:\s*(\S+)/;
         $p->{empty_cycles} = int($1);
 	print if $VERBOSE;
     }
     close(P);
-    die "Could not determinces empty test speed for $perl"
+    die "Could not determinces empty test speed for $p->{path}"
         unless  $p->{empty_cycles};
     $p->{point_sum} = 0;
 }
@@ -144,7 +165,7 @@ for $test (@tests) {
     my $scale;
     my $p;
     for $p (@perls) {
-        my $perl = $p->{path};
+        my $perl = $p->cmd;
 	if ($p->{version} < $prop{'require'}) {
 	    # Can't run test
 	    if ($VERBOSE) {

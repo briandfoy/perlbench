@@ -39,7 +39,7 @@ print "CYCLES: $scale\n";
 print "USER TIME: $user\n";
 print "SYSTEM TIME: $system\n";
 print "REAL TIME: $real\n";
-printf "CPU: %.0f%%\n", 100*$used/$real;
+printf "CPU: %.0f%%\n", 100*$used/$real if $real > 0;
 if ($used > 0.1) {
     print "CYCLES/SEC: ", $scale / $used, "\n";
     if (defined $empty_cycles_per_sec) {

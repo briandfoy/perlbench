@@ -10,6 +10,14 @@ require 'benchlib.pl';
 
 &runtest(0.01, <<'ENDTEST');
 
-    system $^X, "-e", "use Getopt::Std; use Text::ParseWords; use File::Find; 1";
+    my $path = $^X;
+    (my $pdir = $path) =~ s,[/\\][^/\\]+$,/,;
+    my @inc;
+    if (-d "$pdir/lib") {
+        # uninstalled perl
+	@inc = ("-I", "$pdir/lib");
+    }
+
+    system $^X, @inc, "-e", "use Getopt::Std; use Text::ParseWords; use File::Find; 1";
 
 ENDTEST

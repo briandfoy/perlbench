@@ -150,6 +150,18 @@ AVERAGE                  100     100      92      95      94     106
 
 
 
+Testing shared perls
+---------------------
+
+For perls which are built as shared libraries (see perl -V:useshrplib),
+benchmarking is supported on OS/2 only.  Even in this case either the
+version of Perl used to run 'bench' should be different from versions
+which are benchmarked, or it should be statically-linked (perl_.exe).
+
+A workaround for the latter problem is to specify different names for
+perl DLL during the build of the benchmarked version (PERL_DLL_BASE
+in the [GNU]Makefile on OS/2).
+
 ---------------------------------------------------------------------
 
 © 1997-1998 Gisle Aas. All rights reserved.

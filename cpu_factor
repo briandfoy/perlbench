@@ -1,14 +1,16 @@
 #!/local/perl/bin/perl
 
-if (@ARGV && $ARGV[0] =~ /^-d$/) {
+if (@ARGV && $ARGV[0] =~ /^-v$/) {
    shift;
    $VERBOSE = 1;
 }
 
 # Test how fast this machine is in order to find test scale factor
 my($ub,$sb) = times;
-my $count = 30000;
+my $count = 20000;
 my $used_time;
+
+print "Starting up with $count iterations\n" if $VERBOSE;
 
 COUNT:
 {
@@ -27,14 +29,16 @@ COUNT:
 
     my($ua, $sa) = times;
     $used_time = $ua - $ub;
-    if ($used_time < 8) {
+    if ($used_time < 16) {
 	# This was to fast, redo with higher $count
 	if ($used_time < 0.1) {
 	    $count *= 60;
-	} elsif ($used_time < 0.5) {
-	    $count *= 12;
+	} elsif ($used_time < 1) {
+	    $count *= 16;
 	} else {
-	    $count *= 2;
+	    my $adjust = 18 / $used_time;
+	    $adjust = 1.5 if $adjust < 1.5;
+	    $count = int($count * $adjust);
 	}
 	print "Too fast (${used_time}s), " if $VERBOSE;
 	print "increasing loop count to $count\n" if $VERBOSE;

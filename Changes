@@ -1,0 +1,20 @@
+1998-07-15   Gisle Aas <aas@sn.no>
+
+   Release 0.06
+
+   Makefile.PL: Define 'make test' target.
+
+   Make it easier to test uninstalled perls.  Patch by
+   <joshua.pritikin@db.com>
+
+
+
+1998-01-05   Gisle Aas <aas@sn.no>
+
+   Release 0.04
+
+
+
+1997-05-13   Gisle Aas <aas@sn.no>
+
+   Release 0.01

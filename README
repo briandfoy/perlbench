@@ -3,14 +3,15 @@ Perl benchmark suite
 
 This is a Perl benchmark suite.  It can be used to compare the
 relative speed of different versions of Perl.  You run the benchmark
-by starting the 'bench' script giving the path-name of various perls
+by starting the 'bench' script giving the path-name of various Perls
 you want to test as argument.  The bench program takes the following
 optional parameters:
 
   -v               more verbose output
   -s               don't scale numbers (so that first perl is always 100)
   -t <filter>      only tests that match <filter> regex are timed
-  -c <cpu-factor>  use this factor to scale tests
+  -c <cpu-factor>  use this factor to scale tests instead of running the
+                   'cpu_factor' program to determine it.
 
 
 
@@ -57,6 +58,96 @@ as the body inside a loop.
 
 If you want to contribute some additional tests, please send them to
 <gisle@aas.no>.
+
+
+
+Some results
+------------
+
+This is the result of running the tests on a RedHat Linux 4.0 system
+running on a 90Mhz Intel Pentium.  The compiler called 'cc' is gcc-2.7.2.
+
+
+A) perl-5.004
+	path        = /local/perl/5.004/bin/perl
+	cc          = cc
+	optimize    = -O2
+	ccflags     = -Dbool=char -DHAS_BOOL -I/usr/local/include
+	usemymalloc = n
+
+B) perl-5.00404
+	path        = /local/perl/5.004_04/bin/perl
+	cc          = cc
+	optimize    = -O2
+	ccflags     = -Dbool=char -DHAS_BOOL -I/usr/local/include
+	usemymalloc = n
+
+C) perl-5.00456
+	path        = /local/perl/5.004_56/bin/perl
+	cc          = cc
+	optimize    = -O2
+	ccflags     = -Dbool=char -DHAS_BOOL -I/usr/local/include
+	usemymalloc = n
+
+D) perl-5.003
+	path        = /local/perl/5.003/bin/perl
+	cc          = cc
+	optimize    = -O2
+	ccflags     = -Dbool=char -DHAS_BOOL
+	usemymalloc = n
+
+E) perl-5.002
+	path        = /local/perl/5.002/bin/perl
+	cc          = cc
+	optimize    = -O2
+	ccflags     = -D__USE_BSD_SIGNAL -Dbool=char -DHAS_BOOL -I/usr/local/include
+	usemymalloc = n
+
+F) perl-4.036
+	path        = /local/perl/4.036/bin/perl
+
+                           A       B       C       D       E       F
+                        ----    ----    ----    ----    ----    ----
+arith/mixed              100     108     101      99     104      71
+arith/trig               100      95      99      88      95      70
+array/copy               100      98      82      59      61     176
+array/foreach            100      89      91     118     126     181
+array/index              100     107      96     118     117     112
+array/pop                100      93      80      76      68     222
+array/shift              100      95      84      74      66     217
+call/0arg-noamp          100      86      31      39      39     N/A
+call/0arg                100      87      32      38      37      43
+call/1arg                100      90      38      45      43      46
+call/2arg                100      93      41      50      48      46
+call/9arg                100     105      99      87      87     N/A
+call/empty               100      96      63      75      92      85
+call/fib                 100      99      91     107     109     N/A
+call/method              100      92      73      77      83     N/A
+call/wantarray           100      97      85      98      99     N/A
+hash/copy                100     104      95     105      98     127
+hash/each                100      91      80      94      99     130
+hash/foreach-sort        100     105      90     110     110      81
+hash/foreach             100      98      89     108     102     N/A
+hash/get                 100     122      99      92      93      46
+hash/set                 100      90      90      98     101      60
+loop/for-c               100      80      85      95      94      43
+loop/for-interval        100     102      91     116     114      53
+loop/getline             100     104      90     101      93      98
+loop/while-my            100      93      92     103     101     N/A
+loop/while               100      88      89     100      98      50
+re/const                 100      95     173     102      80      60
+re/w                     100      96      98     109      99      58
+startup/fewmod           100      97      94     140     137     N/A
+startup/noprog           100     100      99     106     105     148
+string/base64            100     101     191     100      98     N/A
+string/htmlparser        100      99       0       0       0     N/A
+string/index-const       100      99     105     112     101     132
+string/index-var         100     194     197     141     151     296
+string/ipol              100      87      85     122     123      28
+
+AVERAGE                  100      99      89      92      91     103
+
+
 
 ---------------------------------------------------------------------
 

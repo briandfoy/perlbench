@@ -1,7 +1,7 @@
 #!perl
 
 # Name: Run HTML::Parser from libwww-perl on the www.perl.com frontpage
-# Require: 5
+# Require: 5.002
 # Desc:
 
 

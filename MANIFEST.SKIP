@@ -1,8 +1,11 @@
 ^MANIFEST.SKIP$
 ^Makefile$
 ^pm_to_blib$
-^.cvsignore$
+^\.cvsignore$
 CVS/
 ^blib
 ~$
-
+\.old$
+\.bak$
+^my
+^perl4$

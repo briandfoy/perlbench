@@ -37,7 +37,10 @@ print "REAL TIME: ", $after_r - $before_r, "\n";
 if ($used > 0.1) {
     print "CYCLES/SEC: ", $scale / $used, "\n";
     if (defined $empty_cycles_per_sec) {
-	$used -= $scale / $empty_cycles_per_sec;
+	$loop_overhead = $scale / $empty_cycles_per_sec;
+	$p = $loop_overhead / $used * 100;
+        printf "LOOP OVERHEAD PERCENTAGE: %.1f\n", $p;
+	$used -= $loop_overhead;
 	print "ADJUSTED USER TIME: $used\n";
     }
     print "BENCH POINTS: ", $point_factor / $used, "\n";

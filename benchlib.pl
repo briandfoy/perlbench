@@ -11,6 +11,7 @@ $cpu_factor = shift;
 if (!$cpu_factor) {
     die "No CPU factor specified\n";
 }
+$empty_cycles_per_sec = shift;
 
 sub main'runtest
 {
@@ -18,19 +19,27 @@ sub main'runtest
     $scale = int($scale * $cpu_factor);
     $point_factor = 1000 unless $point_factor;
     $code = <<EOT1 . $code . <<'EOT2';
-(\$before) = times;
+\$before_r = time;
+(\$before_u, \$before_s) = times;
 for (\$i = 0; \$i < $scale; \$i++) {
    package main;
    #---- test code ----
 EOT1
    #-------------------
 }
-($after) = times;
-$used = $after - $before;
+($after_u, $after_s) = times;
+$after_r = time;
+$used = $after_u - $before_u;
+print "CYCLES: $scale\n";
 print "USER TIME: $used\n";
-if ($used < 0.1) {
-    print "BENCH POINTS: UNKNOWN\n";
-} else {
+print "SYSTEM TIME: ", $after_s - $before_s, "\n";
+print "REAL TIME: ", $after_r - $before_r, "\n";
+if ($used > 0.1) {
+    print "CYCLES/SEC: ", $scale / $used, "\n";
+    if (defined $empty_cycles_per_sec) {
+	$used -= $scale / $empty_cycles_per_sec;
+	print "ADJUSTED USER TIME: $used\n";
+    }
     print "BENCH POINTS: ", $point_factor / $used, "\n";
 }
 EOT2

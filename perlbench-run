@@ -78,6 +78,7 @@ if ($opt_t) {
 # Try to run the empty test in order to time the loop
 for $p (@perls) {
     my $perl = $p->{path};
+    print "Timing empty loop for perl-$p->{version}\n" if $VERBOSE;
     open(P, "$perl empty.t $factor|") or die;
     while (<P>) {
         next unless /^CYCLES\/SEC:\s*(\S+)/;

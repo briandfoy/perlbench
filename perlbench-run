@@ -175,6 +175,7 @@ for $test (@tests) {
 	    }
 	    printf "%8.0f", $points;
 	    $p->{point_sum} += $points;
+	    $p->{no_tests}++;
 	}
     }
     print "\n" unless $VERBOSE;
@@ -184,7 +185,7 @@ unless ($VERBOSE) {
     print "\n";
     printf "%-20s", "AVERAGE";
     for $p (@perls) {
-        printf "%8.0f", $p->{point_sum} / scalar(@tests);
+        printf "%8.0f", $p->{point_sum} / $p->{no_tests};
     }
     print "\n";
 }

@@ -306,7 +306,7 @@ package HTML::Parser;
 # $Id$
 
 use strict;
-use HTML::Entities ();
+#use HTML::Entities ();
 
 use vars qw($VERSION);
 $VERSION = sprintf("%d.%02d", q$Revision$ =~ /(\d+)\.(\d+)/);
@@ -472,12 +472,12 @@ sub parse
 		    if ($$buf =~ s|(^=\s*([^\"\'>\s][^>\s]*)\s*)||) {
 			$eaten .= $1;
 			$val = $2;
-			HTML::Entities::decode($val);
+			#HTML::Entities::decode($val);
 		    # or quoted by " or '
 		    } elsif ($$buf =~ s|(^=\s*([\"\'])(.*?)\2\s*)||s) {
 			$eaten .= $1;
 			$val = $3;
-			HTML::Entities::decode($val);
+			#HTML::Entities::decode($val);
                     # truncated just after the '=' or inside the attribute
 		    } elsif ($$buf =~ m|^(=\s*)$| or
 			     $$buf =~ m|^(=\s*[\"\'].*)|s) {

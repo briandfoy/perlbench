@@ -5,7 +5,9 @@
    Makefile.PL: Define 'make test' target.
 
    Make it easier to test uninstalled perls.  Patch by
-   <joshua.pritikin@db.com>
+   <joshua.pritikin@db.com>.
+
+   Use the Time::HiRes module if available.
 
 
 

@@ -1,7 +1,7 @@
 #!perl
 
 # Name: Traverse hash with foreach (sort keys %hash)
-# Require: 5
+# Require: 4
 # Desc:
 #
 
@@ -9,7 +9,7 @@
 require 'benchlib.pl';
 
 $i = "abc";
-for (1..80) {
+for (1..70) {
     $hash{$i} = $j++;
     $i++;
 }
@@ -17,9 +17,8 @@ print "keys %hash = ", int(keys %hash), "\n";
 
 &runtest(1, <<'ENDTEST');
 
-   my $k;
-   foreach $k (keys %hash) {
-       my $v = $hash{$k};
+   foreach $k (sort keys %hash) {
+       $v = $hash{$k};
        # 
    }
 

@@ -14,10 +14,20 @@ for (1..1000) {
     $key++;
 }
 
-&runtest(40, <<'ENDTEST');
+&runtest(15, <<'ENDTEST');
 
-   $a{$key} = 1;
-   $a{$key} = 2;
+   $hash{$key} = 1;
+   $hash{$key} = 2;
+   $hash{$key} = 3;
+   $hash{$key} = 4;
+   $hash{$key} = 5;
+   $key++;
+
+   $hash{$key} = 1;
+   $hash{$key} = 2;
+   $hash{$key} = 3;
+   $hash{$key} = 4;
+   $hash{$key} = 5;
    $key++;
 
 ENDTEST

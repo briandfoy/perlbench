@@ -14,9 +14,11 @@ t/array/foreach.t
 t/array/index.t
 t/array/pop.t
 t/array/shift.t
+t/call/0arg-noamp.t
 t/call/0arg.t
 t/call/1arg.t
 t/call/2arg.t
+t/call/9arg.t
 t/call/empty.t
 t/call/fib.t
 t/call/method.t
@@ -27,10 +29,13 @@ t/hash/foreach-sort.t
 t/hash/foreach.t
 t/hash/get.t
 t/hash/set.t
+t/loop/getline.t
 t/re/const.t
 t/re/w.t
 t/startup/fewmod.t
 t/startup/noprog.t
+t/string/base64.t
+t/string/htmlparser.t
 t/string/index-const.t
 t/string/index-var.t
 t/string/ipol.t

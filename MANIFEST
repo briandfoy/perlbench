@@ -14,7 +14,6 @@ t/array/foreach.t
 t/array/index.t
 t/array/pop.t
 t/array/shift.t
-t/call/0arg-noamp.t
 t/call/0arg.t
 t/call/1arg.t
 t/call/2arg.t

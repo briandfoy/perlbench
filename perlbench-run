@@ -6,8 +6,12 @@ use strict;
 $| = 1;
 my $VERBOSE = 0;
 
-my @perls;
+if (@ARGV && $ARGV[0] =~ /^-d$/) {
+   shift;
+   $VERBOSE = 1;
+}
 
+my @perls;
 for (@ARGV) {
    unless (-x $_) {
 	warn "Not executable $_\n";
@@ -67,29 +71,61 @@ unless ($VERBOSE) {
 	$no++;
     }
     print "\n";
+
+    print " " x 15;
+    for $p (@perls) {
+	printf "%8s", "----";
+    }
+    print "\n";
+    
 }
 
 my $test;
-for $test (@tests) {
+for $test (sort @tests) {
     unless (open(T, $test)) {
 	warn "Can't open $test: $!";
 	next;
     }
-    my $lines = 10;
+    my %prop;
+    my $lines = 20;
     while (<T>) {
 	last unless $lines--;
-	#print;
+	next unless /^\#\s*(\w+)\s*:\s*(.*)/;
+	my($k,$v) = (lc($1), $2);
+	
+	if (defined $prop{$k}) {
+	    $prop{$k} .= "\n$v";
+	} else {
+	    $prop{$k} = $v;
+	}
     }
     close(T);
+
+    if ($VERBOSE) {
+        print "Test properties:\n";
+	for (keys %prop) {
+	    print "\t$_ = $prop{$_}\n";
+	}
+    }
 
     my $name = $test;
     $name =~ s,.*/,,;  # basename
     $name =~ s,\.t$,,;
     printf "%-15s", $name unless $VERBOSE;
 
+    my $scale;
     my $p;
     for $p (@perls) {
         my($perl, $version) = @$p;
+	if ($version < $prop{'require'}) {
+	    # Can't run test
+	    if ($VERBOSE) {
+		print "Perl-$version can't run the test\n";
+	    } else {
+		printf "%8s", "N/A";
+	    }
+	    next;
+	}
         my $cmd = "$perl $test $factor";
 	my $points = 0;
         print "Running '$cmd'...\n" if $VERBOSE;
@@ -101,7 +137,14 @@ for $test (@tests) {
 	    }
 	}
 	close(P);
-	printf "%8.0f", $points unless $VERBOSE;
+
+	unless ($VERBOSE) {
+	    # present results
+	    unless (defined($scale)) {
+		$scale = 100 / $points;
+	    }
+	    printf "%8.0f", $points*$scale;
+	}
     }
     print "\n" unless $VERBOSE;
 }

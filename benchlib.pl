@@ -16,7 +16,7 @@ sub main'runtest
 {
     local($scale, $code, $point_factor) = @_;
     $scale = int($scale * $cpu_factor);
-    $point_factor = 1000;
+    $point_factor = 1000 unless $point_factor;
     $code = <<EOT1 . $code . <<'EOT2';
 (\$before) = times;
 for (\$i = 0; \$i < $scale; \$i++) {

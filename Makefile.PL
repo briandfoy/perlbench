@@ -1,3 +1,5 @@
+# This is really only used to make a distribution file.
+
 use ExtUtils::MakeMaker;
 
 WriteMakefile (

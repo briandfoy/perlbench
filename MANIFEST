@@ -29,7 +29,11 @@ t/hash/foreach-sort.t
 t/hash/foreach.t
 t/hash/get.t
 t/hash/set.t
+t/loop/for-c.t
+t/loop/for-interval.t
 t/loop/getline.t
+t/loop/while-my.t
+t/loop/while.t
 t/re/const.t
 t/re/w.t
 t/startup/fewmod.t

@@ -7,11 +7,11 @@ by starting the 'bench' script giving the path-name of various Perls
 you want to test as argument.  The bench program takes the following
 optional parameters:
 
-  -v               more verbose output
   -s               don't scale numbers (so that first perl is always 100)
   -t <filter>      only tests that match <filter> regex are timed
   -c <cpu-factor>  use this factor to scale tests instead of running the
                    'cpu_factor' program to determine it.
+  -d <dirname>     what directory to save results in
 
 
 
@@ -151,7 +151,7 @@ AVERAGE                  100     100      92      95      94     106
 
 ---------------------------------------------------------------------
 
-© 1997-1999 Gisle Aas. All rights reserved.
+© 1997,1998,1999,2005 Gisle Aas. All rights reserved.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as Perl itself.

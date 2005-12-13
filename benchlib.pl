@@ -57,7 +57,7 @@ if ($used > 0.1) {
 	$used -= $loop_overhead;
 	print "ADJUSTED USED TIME: $used\n";
     }
-    print "BENCH POINTS: ", 1000 / $used, "\n";
+    print "BENCH POINTS: ", 1000 / $used, "\n" if $used > 0;
 }
 EOT3
 

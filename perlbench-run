@@ -134,10 +134,23 @@ for $test (@tests) {
 	warn "Can't open $test: $!";
 	next;
     }
+
+    my $name = $test;
+    $name =~ s,^t/,,;
+    $name =~ s,\.t$,,;
+
+    my $save_file = "$dir/$name/test.txt";
+    mkpath(dirname($save_file), 0, 0755);
+    open(SAVE, ">$save_file") || die "Can't create $save_file: $!";
+    (my $save_file_link = $save_file) =~ s,^\Q$dir\E/,,;
+    $save_file_link = htmlesc($save_file_link);
+
+    printf "%-20s", $name;
+    print INDEX qq(<tr><th align=left><a href="$save_file_link">) . htmlesc($name) . "</a></th>\n";
+
     my %prop;
-    my $lines = 20;
     while (<T>) {
-	last unless $lines--;
+	print SAVE $_;
 	next unless /^\#\s*(\w+)\s*:\s*(.*)/;
 	my($k,$v) = (lc($1), $2);
 
@@ -148,12 +161,7 @@ for $test (@tests) {
 	}
     }
     close(T);
-
-    my $name = $test;
-    $name =~ s,^t/,,;
-    $name =~ s,\.t$,,;
-    printf "%-20s", $name;
-    print INDEX "<tr><th align=left>" . htmlesc($name) . "</th>\n";
+    close(SAVE) || die "Can't write $save_file: $!";
 
     my $scale;
     my $p;

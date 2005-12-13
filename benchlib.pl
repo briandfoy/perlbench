@@ -19,13 +19,21 @@ sub main'runtest
     $scale = int($scale * $cpu_factor);
     $scale = 1 if $scale < 1;
     $point_factor = 1000 unless $point_factor;
-    $code = <<EOT1 . $code . <<'EOT2';
+    $code = <<'EOT1' . $code . <<EOT2 . $code . <<'EOT3';
+# warm up
+for ($i = 0; $i < 2; $i++) {
+   package main;
+   #---- test code ----
+EOT1
+   #-------------------
+}
+
 \$before_r = time;
 (\$before_u, \$before_s, \$before_cu, \$before_cs) = times;
 for (\$i = 0; \$i < $scale; \$i++) {
    package main;
    #---- test code ----
-EOT1
+EOT2
    #-------------------
 }
 ($after_u, $after_s, $after_cu, $after_cs) = times;
@@ -52,7 +60,7 @@ if ($used > 0.1) {
     }
     print "BENCH POINTS: ", $point_factor / $used, "\n";
 }
-EOT2
+EOT3
 
     if ($] >= 5.002) {
 	$code = <<'EOT' . $code;

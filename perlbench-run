@@ -6,13 +6,12 @@ require 5.002;
 use strict;
 $| = 1;
 
-my $VERBOSE;
-
 use Getopt::Std;
-use vars qw($opt_v $opt_c $opt_t $opt_s);
-getopts("vc:t:s") or usage();
+use vars qw($opt_c $opt_t $opt_d $opt_s);
+getopts("c:t:d:s") or usage();
 
-$VERBOSE = $opt_v;
+use File::Basename qw(dirname);
+use File::Path qw(mkpath);
 
 my @perls;
 for (@ARGV) {
@@ -50,6 +49,17 @@ usage() unless @perls;
     }
 }
 
+# result directory
+my $dir = $opt_d;
+unless ($dir) {
+    my $cnt = 1;
+    while (1) {
+	$dir = sprintf "benchres-%03d", $cnt;
+	last unless -e $dir;
+	$cnt++;
+    }
+}
+mkdir($dir, 0755) || die "Can't mkdir(\"$dir\"): $!";
 
 my $factor = $opt_c;
 unless ($factor) {
@@ -58,7 +68,7 @@ unless ($factor) {
     die "Can't calculate cpu speed factor" unless $factor;
 }
 
-print "\nCPU SPEED FACTOR = $factor\n" if $VERBOSE;
+file("$dir/CPU_FACTOR", "$factor\n");
 
 # Try to run tests
 die "No test directory found" unless -d 't';
@@ -74,12 +84,10 @@ if ($opt_t) {
 
 # Try to run the empty test in order to time the loop
 for my $p (@perls) {
-    print "Timing empty loop for perl-$p->{version}\n" if $VERBOSE;
     $p->run_cmd(*P, "empty.t", $factor);
     while (<P>) {
         next unless /^CYCLES\/SEC:\s*(\S+)/;
         $p->{empty_cycles} = int($1);
-	print if $VERBOSE;
     }
     close(P);
     die "Could not determine empty test speed for $p->{path}"
@@ -87,20 +95,19 @@ for my $p (@perls) {
     $p->{point_sum} = 0;
 }
 
-unless ($VERBOSE) {
-    print "\n";
-    print " " x 20;
-    for my $p (@perls) {
-	printf "%8s", $p->{label};
-    }
-    print "\n";
-
-    print " " x 20;
-    for my $p (@perls) {
-	printf "%8s", ("-" x max(3, length($p->{label})));
-    }
-    print "\n";
+# heading
+print "\n";
+print " " x 20;
+for my $p (@perls) {
+    printf "%8s", $p->{label};
 }
+print "\n";
+
+print " " x 20;
+for my $p (@perls) {
+    printf "%8s", ("-" x max(3, length($p->{label})));
+}
+print "\n";
 
 my $test;
 for $test (@tests) {
@@ -123,64 +130,55 @@ for $test (@tests) {
     }
     close(T);
 
-    if ($VERBOSE) {
-        print "Test properties:\n";
-	for (keys %prop) {
-	    print "\t$_ = $prop{$_}\n";
-	}
-    }
-
     my $name = $test;
     $name =~ s,^t/,,;
     $name =~ s,\.t$,,;
-    printf "%-20s", $name unless $VERBOSE;
+    printf "%-20s", $name;
 
     my $scale;
     my $p;
     for my $p (@perls) {
 	if ($p->{version} < $prop{'require'}) {
 	    # Can't run test
-	    if ($VERBOSE) {
-		print "Perl-$p->{version} can't run the test\n";
-	    } else {
-		printf "%8s", "N/A";
-	    }
+	    printf "%8s", "N/A";
 	    next;
 	}
+
+	my $res_file = "$dir/$name/" . $p->{label} . ".txt";
+	mkpath(dirname($res_file), 0, 0755);
+	open(RES, ">$res_file") || die "Can't create $res_file: $!";
+
 	my $points = 0;
 	$p->run_cmd(*P, $test, $factor, $p->{empty_cycles});
 	while (<P>) {
-	    print ">>> $_" if $VERBOSE;
+	    print RES $_;
 	    if (/^BENCH POINTS:\s+(\S+)/) {
 		$points = $1;
 	    }
 	}
 	close(P);
+	close(RES);
 
-	unless ($VERBOSE) {
-	    # present results
-	    unless ($opt_s) {
-		unless (defined $scale) {
-		    $scale = 100 / $points;
-		}
-		$points *= $scale;
+	# present results
+	unless ($opt_s) {
+	    unless (defined $scale) {
+		$scale = 100 / $points;
 	    }
-	    printf "%8.0f", $points;
-	    $p->{point_sum} += $points;
-	    $p->{no_tests}++;
+	    $points *= $scale;
 	}
+	printf "%8.0f", $points;
+	$p->{point_sum} += $points;
+	$p->{no_tests}++;
     }
-    print "\n" unless $VERBOSE;
+    print "\n";
 }
 
-unless ($VERBOSE) {
-    print "\n";
-    printf "%-20s", "AVERAGE";
-    for my $p (@perls) {
-        printf "%8.0f", $p->{point_sum} / $p->{no_tests};
-    }
-    print "\n";
+print "\n";
+printf "%-20s", "AVERAGE";
+for my $p (@perls) {
+    printf "%8.0f", $p->{point_sum} / $p->{no_tests};
 }
+print "\n";
 
 
 sub usage
@@ -189,11 +187,11 @@ sub usage
     die "Usage: $0 [options] [lab1=]<perl1> [lab2=]<perl2>...
 
 Recognized options:
-  -v               more verbose output
   -s               don't scale numbers (so that first perl is always 100)
   -t <filter>      only tests that match <filter> regex are timed
   -c <cpu-factor>  use this factor to scale tests instead of running the
                    'cpu_factor' program to determine it.
+  -d <dirname>     where to save results
 ";
 }
 
@@ -205,6 +203,27 @@ sub max
 	$max = $n if $n > $max;
     }
     return $max;
+}
+
+sub file {
+    my $name = shift;
+    if (@_) {
+        my $content = shift;
+        open(my $f, ">", $name) || die "Can't create '$name': $!";
+        binmode($f);
+        print $f $content;
+        close($f) || die "Can't write to '$name': $!";
+        if (@_) {
+            my $mode = shift;
+            change_mode($mode, $name);
+        }
+    }
+    else {
+        open(my $f, "<", $name) || return undef;
+        binmode($f);
+        local $/;
+        return scalar <$f>;
+    }
 }
 
 BEGIN {
@@ -284,7 +303,6 @@ sub run_cmd
     my @cmd = $self->cmd;
     my $fh = shift;
     my @args = map {/\s/ ? "'$_'" : $_} @_;
-    print "Running '@cmd @args'...\n" if $VERBOSE;
     open($fh, "@cmd @args |") or die "Cannot pipe from '@cmd @args': $!";
 }
 

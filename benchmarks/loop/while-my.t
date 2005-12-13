@@ -8,7 +8,7 @@
 
 require 'benchlib.pl';
 
-&runtest(0.01, <<'ENDTEST');
+&runtest(0.007, <<'ENDTEST');
 
     my $foo;
     my $count = 30000;

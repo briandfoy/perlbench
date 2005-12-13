@@ -30,7 +30,7 @@ $plain = "abcd" x 200;
 
 require 'benchlib.pl';
 
-&runtest(0.3, <<'ENDTEST');
+&runtest(0.4, <<'ENDTEST');
 
    $base64 = encode_base64($plain);
 

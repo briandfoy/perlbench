@@ -10,7 +10,7 @@ require 'benchlib.pl';
 
 @a = (1..30);
 
-&runtest(15, <<'ENDTEST');
+&runtest(10, <<'ENDTEST');
 
    foreach $e (@a) {
        #$a = $e;

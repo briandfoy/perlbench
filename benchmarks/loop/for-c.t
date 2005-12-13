@@ -8,7 +8,7 @@
 
 require 'benchlib.pl';
 
-&runtest(0.02, <<'ENDTEST');
+&runtest(0.01, <<'ENDTEST');
 
     for ($_ = 1; $_ <= 10_000; $_++) {
 	$foo = $_;

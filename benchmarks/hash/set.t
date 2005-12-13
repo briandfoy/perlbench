@@ -14,7 +14,7 @@ for (1..1000) {
     $key++;
 }
 
-&runtest(15, <<'ENDTEST');
+&runtest(10, <<'ENDTEST');
 
    $key = "abc";
 

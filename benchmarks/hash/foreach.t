@@ -13,7 +13,7 @@ for (1..80) {
     $hash{$i} = $j++;
     $i++;
 }
-print "keys %hash = ", int(keys %hash), "\n";
+#print "keys %hash = ", int(keys %hash), "\n";
 
 &runtest(1, <<'ENDTEST');
 

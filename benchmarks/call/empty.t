@@ -12,7 +12,7 @@ sub foo {}
 sub bar {}
 
 
-&runtest(30, <<'ENDTEST');
+&runtest(20, <<'ENDTEST');
 
    &foo;
    &bar;

@@ -13,9 +13,9 @@ for (1..70) {
     $hash{$i} = $j++;
     $i++;
 }
-print "keys %hash = ", int(keys %hash), "\n";
+#print "keys %hash = ", int(keys %hash), "\n";
 
-&runtest(1, <<'ENDTEST');
+&runtest(0.75, <<'ENDTEST');
 
    foreach $k (sort keys %hash) {
        $v = $hash{$k};

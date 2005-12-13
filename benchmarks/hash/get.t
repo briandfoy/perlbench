@@ -15,7 +15,7 @@ for (1..1000) {
 }
 #print "keys %hash = ", int(keys %hash), "\n";
 
-&runtest(15, <<'ENDTEST');
+&runtest(10, <<'ENDTEST');
 
    $a = $hash{'abc'};
    $a = $hash{'abe'};

@@ -8,7 +8,7 @@
 
 require 'benchlib.pl';
 
-&runtest(500, <<'ENDTEST');
+&runtest(300, <<'ENDTEST');
 
     # no code
 

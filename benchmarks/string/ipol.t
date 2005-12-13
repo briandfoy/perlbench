@@ -10,7 +10,7 @@ require 'benchlib.pl';
 
 $a = "xx" x 100;
 
-&runtest(60, <<'ENDTEST');
+&runtest(40, <<'ENDTEST');
 
    $b = "foo $a bar";
    $c = "$b 33";

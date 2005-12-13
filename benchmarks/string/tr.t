@@ -12,7 +12,7 @@ require 'benchlib.pl';
 for (@a) { $_ = sprintf("%c", $_) };
 $a = join("",  @a);
 
-&runtest(10, <<'ENDTEST');
+&runtest(8, <<'ENDTEST');
 
    $a =~ tr/A-ZÀ-ÖØ-Þ/a-zà-öø-þ/;
    $a =~ tr/a-zà-öø-þ/A-ZÀ-ÖØ-Þ/;

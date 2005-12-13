@@ -8,7 +8,7 @@ require 'benchlib.pl';
 
 $x = 0;
 
-&runtest(45, <<'ENDTEST');
+&runtest(20, <<'ENDTEST');
 
     $x = ($x + 2) % 333;
     $z = $x / 40;

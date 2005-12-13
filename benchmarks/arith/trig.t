@@ -8,7 +8,7 @@ require 'benchlib.pl';
 
 $x = 0.23;
 
-&runtest(25, <<'ENDTEST');
+&runtest(15, <<'ENDTEST');
 
   $a = sin($x);
   $b = cos($a);

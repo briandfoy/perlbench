@@ -16,7 +16,7 @@ while (<DATA>) {
 srand(10);
 push(@b, splice(@a, rand(@a), 1)) while @a;  # shuffle
 
-&runtest(0.3, <<'ENDTEST');
+&runtest(0.15, <<'ENDTEST');
 
     @a = sort @b;
 

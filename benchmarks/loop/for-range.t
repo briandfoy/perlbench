@@ -10,7 +10,7 @@ require 'benchlib.pl';
 
 $x = 300;
 
-&runtest(1, <<'ENDTEST');
+&runtest(0.75, <<'ENDTEST');
 
     for (1 .. $x) {
 	$foo = $_;

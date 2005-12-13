@@ -13,7 +13,7 @@ for (1..1000) {
     $hash{$i} = 1;
     $i++;
 }
-print "keys %hash = ", int(keys %hash), "\n";
+#print "keys %hash = ", int(keys %hash), "\n";
 
 &runtest(0.05, <<'ENDTEST');
 

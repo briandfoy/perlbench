@@ -4,7 +4,7 @@ use ExtUtils::MakeMaker;
 
 WriteMakefile (
    NAME    => 'perlbench',
-   VERSION => '0.07',
+   VERSION => '0.90',
    dist    => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
 );
 

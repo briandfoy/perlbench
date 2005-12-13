@@ -1,3 +1,13 @@
+2005-12-14   Gisle Aas <gisle@ActiveState.com>
+
+   Release 0.90
+
+   Rescaled test that ran too long on my current machine.
+
+   Save result details in a directory with HTML index.
+
+
+
 1999-04-05   Gisle Aas <gisle@aas.no>
 
    Release 0.07

@@ -186,7 +186,15 @@ unless ($VERBOSE) {
 sub usage
 {
     $0 =~ s,.*/,,;
-    die "Usage: $0 [options] <perl1> <perl2>...\n";
+    die "Usage: $0 [options] [lab1=]<perl1> [lab2=]<perl2>...
+
+Recognized options:
+  -v               more verbose output
+  -s               don't scale numbers (so that first perl is always 100)
+  -t <filter>      only tests that match <filter> regex are timed
+  -c <cpu-factor>  use this factor to scale tests instead of running the
+                   'cpu_factor' program to determine it.
+";
 }
 
 sub max

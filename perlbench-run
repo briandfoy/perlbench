@@ -8,43 +8,6 @@ $| = 1;
 
 my $VERBOSE;
 
-package Perl;
-
-sub new
-{
-    my($class, $path, $version) = @_;
-    bless { path => $path, version => $version }, $class;
-}
-
-my $ld_path = Cwd::extLibpath()	 if $^O eq 'os2';
-$ld_path .= ';'			 if $ld_path and $^O eq 'os2';
-
-sub cmd
-{
-    my $self = shift;
-    my $path = $self->{path};
-    (my $pdir = $path) =~ s,[/\\][^/\\]+$,/,;
-    if (-d "$pdir/lib") {
-        # uninstalled perl
-        Cwd::extLibpath_set("$ld_path$pdir") if $^O eq 'os2'; # Find DLL
-	($path, '-I', "$pdir/lib");
-    } else {
-	$path;
-    }
-}
-
-sub run_cmd
-{
-    my $self = shift;
-    my @cmd = $self->cmd;
-    my $fh = shift;
-    my @args = map {/\s/ ? "'$_'" : $_} @_;
-    print "Running '@cmd @args'...\n" if $VERBOSE;
-    open($fh, "@cmd @args |") or die "Cannot pipe from '@cmd @args': $!";
-}
-
-package main;
-
 use Getopt::Std;
 use vars qw($opt_v $opt_c $opt_t $opt_s);
 getopts("vc:t:s") or usage();
@@ -53,45 +16,40 @@ $VERBOSE = $opt_v;
 
 my @perls;
 for (@ARGV) {
-   unless (-x $_) {
-	warn "$_ is not executable, skipping.\n";
-	next;
-   }
-   my $tmp = Perl->new($_, 'unknown');
-   $tmp->run_cmd(*V, '-e', 'print qq(This is perl ), $]+0, qq(\n)');
-   my $version = <V>;
-   close V or die "closing pipe from perl: exit code $?";
-   chomp $version;
-   unless ($version =~ /^This is perl (\d+.\d+)/) {
-	warn "$_ does not appear to be a working perl, skipping.\n";
-	next;
-   }
-   push(@perls, Perl->new($_, $1+0));
+    eval {
+	push(@perls, Perl->new($_));
+    };
+    if ($@) {
+	$@ =~ s/ at (.*) line (\d+).*\n//;
+	warn "$@, skipping...\n";
+    }
 }
 
 usage() unless @perls;
 
 # Show perl configurations
-my $no = "A";
-my $p;
-for $p (@perls)
 {
-    print "\n" unless $no eq "A";
-    print "$no) perl-$p->{version}\n";
-    printf "\t%-11s = %s\n", "path", $p->{path};
-    if ($p->{version} >= 5) {
-	# The perl should have Configure support.  Try to extract
-	# compiler info.
-	my $prog = 'use Config; Config::config_vars(qw(cc optimize ccflags usemymalloc))';
-	$p->run_cmd(*CONFIG, '-e', $prog);
-	while (<CONFIG>) {
-	   next unless /^(\w+)='([^']+)'/;  #' #
-           $p->{$1} = $2;
-	   printf "\t%-11s = %s\n", $1, $2;
-        }
+    my %cnf;
+    my $keymax = length("version");
+    for my $p (@perls) {
+	while (my($k,$v) = each %{$p->{config} || {}}) {
+	    $cnf{$k}{$v}++;
+	    $keymax = length($k) if length($k) > $keymax;
+	}
     }
-    $no++;
+
+    for my $p (@perls) {
+	print "$p->{label}) $p->{fullname}\n";
+	printf "\t%-*s = %s\n", $keymax, "version", $p->{version};
+	printf "\t%-*s = %s\n", $keymax, "path", $p->{path};
+	for my $k (sort keys %{$p->{config} || {}}) {
+	    printf "\t%-*s = %s\n", $keymax, $k, $p->{config}{$k}
+		unless $cnf{$k}{$p->{config}{$k}} == @perls;
+	}
+	print "\n";
+    }
 }
+exit;
 
 my $factor = $opt_c;
 unless ($factor) {
@@ -115,7 +73,7 @@ if ($opt_t) {
 @tests = sort @tests;
 
 # Try to run the empty test in order to time the loop
-for $p (@perls) {
+for my $p (@perls) {
     print "Timing empty loop for perl-$p->{version}\n" if $VERBOSE;
     $p->run_cmd(*P, "empty.t", $factor);
     while (<P>) {
@@ -130,18 +88,16 @@ for $p (@perls) {
 }
 
 unless ($VERBOSE) {
-    $no = "A";
     print "\n";
     print " " x 20;
-    for $p (@perls) {
-	printf "%8s", $no;
-	$no++;
+    for my $p (@perls) {
+	printf "%8s", $p->{label};
     }
     print "\n";
 
     print " " x 20;
-    for $p (@perls) {
-	printf "%8s", "----";
+    for my $p (@perls) {
+	printf "%8s", ("-" x max(3, length($p->{label})));
     }
     print "\n";
 }
@@ -181,7 +137,7 @@ for $test (@tests) {
 
     my $scale;
     my $p;
-    for $p (@perls) {
+    for my $p (@perls) {
 	if ($p->{version} < $prop{'require'}) {
 	    # Can't run test
 	    if ($VERBOSE) {
@@ -220,7 +176,7 @@ for $test (@tests) {
 unless ($VERBOSE) {
     print "\n";
     printf "%-20s", "AVERAGE";
-    for $p (@perls) {
+    for my $p (@perls) {
         printf "%8.0f", $p->{point_sum} / $p->{no_tests};
     }
     print "\n";
@@ -231,4 +187,97 @@ sub usage
 {
     $0 =~ s,.*/,,;
     die "Usage: $0 [options] <perl1> <perl2>...\n";
+}
+
+sub max
+{
+    my $max = shift;
+    while (@_) {
+	my $n = shift;
+	$max = $n if $n > $max;
+    }
+    return $max;
+}
+
+BEGIN {
+package Perl;
+
+my $NEXT_LABEL = "A";
+
+sub new
+{
+    my($class, $path) = @_;
+    my $label;
+    if ($path =~ s/^(\S+)=//) {
+	$label = $1;
+    }
+    else {
+	$label = $NEXT_LABEL++;
+    }
+    unless (-x $path) {
+	die "$path is not executable";
+	next;
+    }
+    my $self = bless { path => $path, label => $label }, $class;
+    $self->run_cmd(*V, '-e', 'print qq(This is perl ), $]+0, qq(\n)');
+    my $version = <V>;
+    close V or die "closing pipe from perl: exit code $?";
+    chomp $version;
+    unless ($version =~ /^This is perl (\d+.\d+)/) {
+	die "$path does not appear to be a working perl";
+    }
+    $self->{version} = $1;
+    $self->run_cmd(*V, '-v');
+    while (<V>) {
+	if (/^This is perl, v(\S+)/) {
+	    $self->{fullname} = "perl-$1";
+	}
+	if (/^Binary build (\d+.*) provided by ActiveState/) {
+	    $self->{fullname} .= " build $1";
+	    $self->{fullname} =~ s/^perl/ActivePerl/;
+	}
+    }
+    close(V);
+
+    if ($self->{version} >= 5) {
+	# The perl should have Configure support.  Try to extract
+	# some key settings
+	my $prog = 'use Config; Config::config_vars(qw(cc ccversion gccversion optimize ccflags usethreads use64bitint use64bitall usemymalloc))';
+	$self->run_cmd(*CONFIG, '-e', $prog);
+	while (<CONFIG>) {
+	   next unless /^(\w+)='([^']+)'/;  #' #
+           $self->{config}{$1} = $2;
+        }
+	close(CONFIG);
+    }
+    return $self;
+}
+
+my $ld_path = Cwd::extLibpath()	 if $^O eq 'os2';
+$ld_path .= ';'			 if $ld_path and $^O eq 'os2';
+
+sub cmd
+{
+    my $self = shift;
+    my $path = $self->{path};
+    (my $pdir = $path) =~ s,[/\\][^/\\]+$,/,;
+    if (-d "$pdir/lib") {
+        # uninstalled perl
+        Cwd::extLibpath_set("$ld_path$pdir") if $^O eq 'os2'; # Find DLL
+	($path, '-I', "$pdir/lib");
+    } else {
+	$path;
+    }
+}
+
+sub run_cmd
+{
+    my $self = shift;
+    my @cmd = $self->cmd;
+    my $fh = shift;
+    my @args = map {/\s/ ? "'$_'" : $_} @_;
+    print "Running '@cmd @args'...\n" if $VERBOSE;
+    open($fh, "@cmd @args |") or die "Cannot pipe from '@cmd @args': $!";
+}
+
 }

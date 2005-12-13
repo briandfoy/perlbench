@@ -49,7 +49,7 @@ usage() unless @perls;
 	print "\n";
     }
 }
-exit;
+
 
 my $factor = $opt_c;
 unless ($factor) {

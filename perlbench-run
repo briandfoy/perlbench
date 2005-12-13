@@ -158,7 +158,7 @@ for $test (@tests) {
 	last unless $lines--;
 	next unless /^\#\s*(\w+)\s*:\s*(.*)/;
 	my($k,$v) = (lc($1), $2);
-	
+
 	if (defined $prop{$k}) {
 	    $prop{$k} .= "\n$v";
 	} else {
@@ -232,4 +232,3 @@ sub usage
     $0 =~ s,.*/,,;
     die "Usage: $0 [options] <perl1> <perl2>...\n";
 }
-

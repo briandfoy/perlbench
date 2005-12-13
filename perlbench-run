@@ -12,6 +12,7 @@ getopts("c:t:d:s") or usage();
 
 use File::Basename qw(dirname);
 use File::Path qw(mkpath);
+use Cwd qw(abs_path);
 
 my @perls;
 for (@ARGV) {
@@ -37,6 +38,9 @@ unless ($dir) {
     }
 }
 mkdir($dir, 0755) || die "Can't mkdir(\"$dir\"): $!";
+
+open(INDEX, ">$dir/index.html") || die "Can't create $dir/index.html: $!";
+print INDEX "<html>\n";
 
 # Show perl configurations
 {
@@ -104,18 +108,24 @@ for my $p (@perls) {
 }
 
 # heading
+print INDEX "<table border=1>\n";
+print INDEX "<tr><th>&nbsp;</th>\n";
+
 print "\n";
 print " " x 20;
 for my $p (@perls) {
     printf "%8s", $p->{label};
+    print INDEX "<th>" . htmlesc($p->{label}) . "</th>\n";
 }
 print "\n";
+print INDEX "</th>\n";
 
 print " " x 20;
 for my $p (@perls) {
     printf "%8s", ("-" x max(3, length($p->{label})));
 }
 print "\n";
+
 
 my $test;
 for $test (@tests) {
@@ -142,6 +152,7 @@ for $test (@tests) {
     $name =~ s,^t/,,;
     $name =~ s,\.t$,,;
     printf "%-20s", $name;
+    print INDEX "<tr><th align=left>" . htmlesc($name) . "</th>\n";
 
     my $scale;
     my $p;
@@ -149,6 +160,7 @@ for $test (@tests) {
 	if ($p->{version} < $prop{'require'}) {
 	    # Can't run test
 	    printf "%8s", "N/A";
+	    print INDEX " <td>N/A</td>\n";
 	    next;
 	}
 
@@ -170,6 +182,7 @@ for $test (@tests) {
 	# present results
 	unless (defined $points) {
 	    printf "%8s", "-";
+	    print INDEX " <td>-</td>\n";
 	    next;
 	}
 	unless ($opt_s) {
@@ -179,9 +192,11 @@ for $test (@tests) {
 	    $points *= $scale;
 	}
 	printf "%8.0f", $points;
+	printf INDEX " <td align=right>%.0f</td>\n", $points;
 	$p->{point_sum} += $points;
 	$p->{no_tests}++;
     }
+    print INDEX "</tr>\n";
     print "\n";
 }
 
@@ -190,7 +205,19 @@ printf "%-20s", "AVERAGE";
 for my $p (@perls) {
     printf "%8.0f", $p->{point_sum} / $p->{no_tests};
 }
-print "\n\n(Results saved in $dir)\n";
+print INDEX "</table>\n";
+print INDEX "</html>\n";
+close(INDEX) || die "Can't write $dir/index.html\n";
+
+
+my $index_url = abs_path($dir);
+if ($^O eq "MSWin32") {
+    $index_url =~ s,\\,/,g;
+    $index_url =~ s,^([A-Za-z]):,/$1|,;
+}
+$index_url = "file://$index_url/index.html";
+
+print "\n\nResults saved in $index_url\n";
 
 
 sub usage
@@ -236,6 +263,13 @@ sub file {
         local $/;
         return scalar <$f>;
     }
+}
+
+sub htmlesc {
+    my $str = shift;
+    $str =~ s/&/&amp;/g;
+    $str =~ s/</&lt;/g;
+    $str;
 }
 
 BEGIN {

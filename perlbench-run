@@ -26,6 +26,18 @@ for (@ARGV) {
 
 usage() unless @perls;
 
+# result directory
+my $dir = $opt_d;
+unless ($dir) {
+    my $cnt = 1;
+    while (1) {
+	$dir = sprintf "benchres-%03d", $cnt;
+	last unless -e $dir;
+	$cnt++;
+    }
+}
+mkdir($dir, 0755) || die "Can't mkdir(\"$dir\"): $!";
+
 # Show perl configurations
 {
     my %cnf;
@@ -46,20 +58,16 @@ usage() unless @perls;
 		unless $cnf{$k}{$p->{config}{$k}} == @perls;
 	}
 	print "\n";
-    }
-}
 
-# result directory
-my $dir = $opt_d;
-unless ($dir) {
-    my $cnt = 1;
-    while (1) {
-	$dir = sprintf "benchres-%03d", $cnt;
-	last unless -e $dir;
-	$cnt++;
+	open(RES, ">$dir/CONFIG-$p->{label}.txt") || die;
+	$p->run_cmd(*V, "-V") || die "Can't run $p->{path}: $?";
+	while (<V>) {
+	    print RES $_;
+	}
+	close(V);
+	close(RES) || die "Can't write: $!";
     }
 }
-mkdir($dir, 0755) || die "Can't mkdir(\"$dir\"): $!";
 
 my $factor = $opt_c;
 unless ($factor) {
@@ -86,7 +94,7 @@ if ($opt_t) {
 for my $p (@perls) {
     $p->run_cmd(*P, "empty.t", $factor);
     while (<P>) {
-        next unless /^CYCLES\/SEC:\s*(\S+)/;
+        next unless /^Cycles-Per-Sec:\s*(\S+)/;
         $p->{empty_cycles} = int($1);
     }
     close(P);
@@ -152,7 +160,7 @@ for $test (@tests) {
 	$p->run_cmd(*P, $test, $factor, $p->{empty_cycles});
 	while (<P>) {
 	    print RES $_;
-	    if (/^BENCH POINTS:\s+(\S+)/) {
+	    if (/^Bench-Points:\s+(\S+)/) {
 		$points = $1;
 	    }
 	}

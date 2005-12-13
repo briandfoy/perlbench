@@ -43,21 +43,21 @@ $system = ($after_s - $before_s) + ($after_cs - $before_cs);
 $real   = ($after_r - $before_r);
 $used   = $user + $system;
 
-print "CYCLES: $scale\n";
-print "USER TIME: $user\n";
-print "SYSTEM TIME: $system\n";
-print "REAL TIME: $real\n";
+print "Cycles: $scale\n";
+print "User-Time: $user\n";
+print "System-Time: $system\n";
+print "Real-Time: $real\n";
 printf "CPU: %.0f%%\n", 100*$used/$real if $real > 0;
 if ($used > 0.1) {
-    print "CYCLES/SEC: ", $scale / $used, "\n";
+    print "Cycles-Per-Sec: ", $scale / $used, "\n";
     if (defined $empty_cycles_per_sec) {
 	$loop_overhead = $scale / $empty_cycles_per_sec;
 	$p = 100 * $loop_overhead / $used;
-        printf "LOOP OVERHEAD: %.1f%%\n", $p;
+        printf "Loop-Overhead: %.1f%%\n", $p;
 	$used -= $loop_overhead;
-	print "ADJUSTED USED TIME: $used\n";
+	print "Adjusted-Used-Time: $used\n";
     }
-    print "BENCH POINTS: ", 1000 / $used, "\n" if $used > 0;
+    print "Bench-Points: ", 1000 / $used, "\n" if $used > 0;
 }
 EOT3
 

@@ -148,7 +148,7 @@ for $test (@tests) {
 	mkpath(dirname($res_file), 0, 0755);
 	open(RES, ">$res_file") || die "Can't create $res_file: $!";
 
-	my $points = 0;
+	my $points;
 	$p->run_cmd(*P, $test, $factor, $p->{empty_cycles});
 	while (<P>) {
 	    print RES $_;
@@ -160,6 +160,10 @@ for $test (@tests) {
 	close(RES);
 
 	# present results
+	unless (defined $points) {
+	    printf "%8s", "-";
+	    next;
+	}
 	unless ($opt_s) {
 	    unless (defined $scale) {
 		$scale = 100 / $points;
@@ -178,7 +182,7 @@ printf "%-20s", "AVERAGE";
 for my $p (@perls) {
     printf "%8.0f", $p->{point_sum} / $p->{no_tests};
 }
-print "\n";
+print "\n\n(Results saved in $dir)\n";
 
 
 sub usage

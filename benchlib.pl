@@ -15,10 +15,9 @@ $empty_cycles_per_sec = shift;
 
 sub main'runtest
 {
-    local($scale, $code, $point_factor) = @_;
+    local($scale, $code) = @_;
     $scale = int($scale * $cpu_factor);
     $scale = 1 if $scale < 1;
-    $point_factor = 1000 unless $point_factor;
     $code = <<'EOT1' . $code . <<EOT2 . $code . <<'EOT3';
 # warm up
 for ($i = 0; $i < 2; $i++) {
@@ -58,7 +57,7 @@ if ($used > 0.1) {
 	$used -= $loop_overhead;
 	print "ADJUSTED USED TIME: $used\n";
     }
-    print "BENCH POINTS: ", $point_factor / $used, "\n";
+    print "BENCH POINTS: ", 1000 / $used, "\n";
 }
 EOT3
 

@@ -16,6 +16,8 @@ $empty_cycles_per_sec = shift;
 sub main'runtest
 {
     local($scale, $code) = @_;
+    print "Date: " . &time2iso() . "\n";
+    print "Perl: $^X $]\n";
     $scale = int($scale * $cpu_factor);
     $scale = 1 if $scale < 1;
     $code = <<'EOT1' . $code . <<EOT2 . $code . <<'EOT3';
@@ -46,10 +48,11 @@ $used   = $user + $system;
 print "Cycles: $scale\n";
 print "User-Time: $user\n";
 print "System-Time: $system\n";
-print "Real-Time: $real\n";
+printf "Real-Time: %.*f\n", ($hires ? 3 : 0), $real;
 printf "CPU: %.0f%%\n", 100*$used/$real if $real > 0;
 if ($used > 0.1) {
-    print "Cycles-Per-Sec: ", $scale / $used, "\n";
+    my $cps = $scale / $used;
+    printf "Cycles-Per-Sec: %.*f\n", ($cps < 100 ? 3 : 0), $cps;
     if (defined $empty_cycles_per_sec) {
 	$loop_overhead = $scale / $empty_cycles_per_sec;
 	$p = 100 * $loop_overhead / $used;
@@ -57,7 +60,7 @@ if ($used > 0.1) {
 	$used -= $loop_overhead;
 	print "Adjusted-Used-Time: $used\n";
     }
-    print "Bench-Points: ", 1000 / $used, "\n" if $used > 0;
+    printf "Bench-Points: %.5g\n", 1000 / $used if $used > 0;
 }
 EOT3
 
@@ -68,6 +71,7 @@ BEGIN {
     eval {
         require Time::HiRes;
         Time::HiRes->import('time');
+        $hires++;
     };
 }
 
@@ -80,5 +84,15 @@ EOT
         die $@;
     }
 }
+
+sub time2iso
+{
+    my $time = shift;
+    $time = time unless defined $time;
+    my($sec,$min,$hour,$mday,$mon,$year) = localtime($time);
+    return sprintf("%04d-%02d-%02d %02d:%02d:%02d",
+            $year+1900, $mon+1, $mday, $hour, $min, $sec);
+}
+
 
 1;

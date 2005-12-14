@@ -6,6 +6,8 @@ bench
 benchlib.pl
 cpu_factor
 empty.t
+style.css
+overlib.js
 howto/loop-counter.pl
 howto/trav-string.pl
 t/arith/mixed.t

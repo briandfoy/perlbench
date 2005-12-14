@@ -55,6 +55,7 @@ if ($used > 0.1) {
     my $cps = $scale / $used;
     printf "Cycles-Per-Sec: %.*f\n", ($cps < 100 ? 3 : 0), $cps;
     if (defined $empty_cycles_per_sec) {
+	printf "Empty-Cycles-Per-Sec: %.0f\n", $empty_cycles_per_sec;
 	$loop_overhead = $scale / $empty_cycles_per_sec;
 	$p = 100 * $loop_overhead / $used;
         printf "Loop-Overhead: %.1f%%\n", $p;

@@ -10,6 +10,7 @@ use Getopt::Std;
 use vars qw($opt_c $opt_t $opt_d $opt_s);
 getopts("c:t:d:s") or usage();
 
+use Sys::Hostname qw(hostname);
 use File::Basename qw(dirname);
 use File::Path qw(mkpath);
 use Cwd qw(abs_path);
@@ -26,6 +27,7 @@ for (@ARGV) {
 }
 
 usage() unless @perls;
+my $HOSTNAME_HTML = htmlesc(hostname());
 
 # result directory
 my $dir = $opt_d;
@@ -41,8 +43,15 @@ mkdir($dir, 0755) || die "Can't mkdir(\"$dir\"): $!";
 
 open(INDEX, ">$dir/index.html") || die "Can't create $dir/index.html: $!";
 print INDEX "<html>\n";
+print INDEX "<head>\n";
+print INDEX " <title>PerlBench $HOSTNAME_HTML " . time2iso() . "</title>\n";
+print INDEX qq( <link rel="stylesheet" href="style.css" type="text/css">\n);
+print INDEX "</head>\n";
+print INDEX "<body>\n";
+print INDEX " <h1>PerlBench results from $HOSTNAME_HTML at " . time2iso() . "</h1>\n";
 
 # Show perl configurations
+my %config_summary;
 {
     my %cnf;
     my $keymax = length("version");
@@ -54,12 +63,14 @@ print INDEX "<html>\n";
     }
 
     for my $p (@perls) {
-	print "$p->{label}) $p->{fullname}\n";
+	my $label = $p->{label};
+	print "$label) $p->{name}\n";
 	printf "\t%-*s = %s\n", $keymax, "version", $p->{version};
 	printf "\t%-*s = %s\n", $keymax, "path", $p->{path};
 	for my $k (sort keys %{$p->{config} || {}}) {
-	    printf "\t%-*s = %s\n", $keymax, $k, $p->{config}{$k}
-		unless $cnf{$k}{$p->{config}{$k}} == @perls;
+	    next if $cnf{$k}{$p->{config}{$k}} == @perls;
+	    printf "\t%-*s = %s\n", $keymax, $k, $p->{config}{$k};
+	    $config_summary{$k}{$label} = $p->{config}{$k};
 	}
 	print "\n";
 
@@ -109,17 +120,17 @@ for my $p (@perls) {
 
 # heading
 print INDEX "<table border=1>\n";
-print INDEX "<tr><th>&nbsp;</th>\n";
+print INDEX " <tr>\n  <th>&nbsp;</th>\n";
 
 print "\n";
 print " " x 20;
 for my $p (@perls) {
     printf "%8s", $p->{label};
     my $h = htmlesc($p->{label});
-    print INDEX qq(<th><a href="CONFIG-$h.txt">$h</a></th>\n);
+    print INDEX qq(  <th><a href="CONFIG-$h.txt">$h</a></th>\n);
 }
 print "\n";
-print INDEX "</th>\n";
+print INDEX " </tr>\n";
 
 print " " x 20;
 for my $p (@perls) {
@@ -146,7 +157,7 @@ for $test (@tests) {
     $save_file_link = htmlesc($save_file_link);
 
     printf "%-20s", $name;
-    print INDEX qq(<tr><th align=left><a href="$save_file_link">) . htmlesc($name) . "</a></th>\n";
+    print INDEX qq( <tr>\n  <th align=left><a href="$save_file_link">) . htmlesc($name) . "</a></th>\n";
 
     my %prop;
     while (<T>) {
@@ -169,7 +180,7 @@ for $test (@tests) {
 	if ($p->{version} < $prop{'require'}) {
 	    # Can't run test
 	    printf "%8s", "N/A";
-	    print INDEX " <td>N/A</td>\n";
+	    print INDEX "  <td>N/A</td>\n";
 	    next;
 	}
 
@@ -193,7 +204,7 @@ for $test (@tests) {
 	# present results
 	unless (defined $points) {
 	    printf "%8s", "-";
-	    print INDEX qq( <td><a href="$res_file_link">??</a></td>\n);
+	    print INDEX qq(  <td><a href="$res_file_link">??</a></td>\n);
 	    next;
 	}
 	unless ($opt_s) {
@@ -203,11 +214,11 @@ for $test (@tests) {
 	    $points *= $scale;
 	}
 	printf "%8.0f", $points;
-	printf INDEX qq( <td align=right><a href="%s">%.0f</a></td>\n), $res_file_link, $points;
+	printf INDEX qq(  <td align=right><a href="%s">%.0f</a></td>\n), $res_file_link, $points;
 	$p->{point_sum} += $points;
 	$p->{no_tests}++;
     }
-    print INDEX "</tr>\n";
+    print INDEX " </tr>\n";
     print "\n";
 }
 
@@ -217,7 +228,51 @@ for my $p (@perls) {
     printf "%8.0f", $p->{point_sum} / $p->{no_tests};
 }
 print INDEX "</table>\n";
-print INDEX "</html>\n";
+print INDEX "<p><small>Higer numbers are better. 200 is twice as fast as 100.</small></p>\n";
+
+print INDEX "<h2>Configuration summary</h2>\n";
+print INDEX "<p>Test ran on a $^O machine";
+if ($^O ne "MSWin32") {
+    my $uname = `uname -a`;
+    if ($uname) {
+	print INDEX qq( that reports its uname as ") . htmlesc($uname) . qq(");
+    }
+}
+print INDEX ".\n";
+print INDEX " Test run completed at " . substr(time2iso(), 11) . ".\n";
+print INDEX "</p>\n";
+
+print INDEX "<table border=1>\n";
+print INDEX " <tr>\n  <th>&nbsp</th>\n";
+for my $p (@perls) {
+    printf "%8s", $p->{label};
+    my $h = htmlesc($p->{label});
+    print INDEX qq(  <th><a href="CONFIG-$h.txt">$h</a></th>\n);
+}
+for my $k ("name", "version", "path") {
+    print INDEX " <tr>\n  <th>$k</th>\n";
+    for my $p (@perls) {
+	print INDEX "  <td>" . htmlesc($p->{$k}) . "</td>\n";
+    }
+    print INDEX " </tr>\n";
+}
+print INDEX " </tr>\n";
+for my $k (sort keys %config_summary) {
+    print INDEX " <tr>\n  <th>" . htmlesc($k) . "</th>\n";
+    for my $lab (map $_->{label}, @perls) {
+	my $v = $config_summary{$k}{$lab};
+	$v = "" unless defined($v);
+	my $len = length($v);
+	$v = $len ? htmlesc($v) : "&nbsp;";
+	$v = "<small>$v</small>" if $len > 40;
+	print INDEX " <td align=left>$v</td>\n";
+    }
+
+    print INDEX " </tr>\n";
+}
+print INDEX "</table>\n";
+
+print INDEX "</body>\n</html>\n";
 close(INDEX) || die "Can't write $dir/index.html\n";
 
 
@@ -283,6 +338,15 @@ sub htmlesc {
     $str;
 }
 
+sub time2iso
+{
+    my $time = shift;
+    $time = time unless defined $time;
+    my($sec,$min,$hour,$mday,$mon,$year) = localtime($time);
+    return sprintf("%04d-%02d-%02d %02d:%02d:%02d",
+            $year+1900, $mon+1, $mday, $hour, $min, $sec);
+}
+
 BEGIN {
 package Perl;
 
@@ -314,11 +378,11 @@ sub new
     $self->run_cmd(*V, '-v');
     while (<V>) {
 	if (/^This is perl, v(\S+)/) {
-	    $self->{fullname} = "perl-$1";
+	    $self->{name} = "perl-$1";
 	}
 	if (/^Binary build (\d+.*) provided by ActiveState/) {
-	    $self->{fullname} .= " build $1";
-	    $self->{fullname} =~ s/^perl/ActivePerl/;
+	    $self->{name} .= " build $1";
+	    $self->{name} =~ s/^perl/ActivePerl/;
 	}
     }
     close(V);

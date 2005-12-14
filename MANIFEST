@@ -6,10 +6,10 @@ bench
 benchlib.pl
 cpu_factor
 empty.t
-style.css
-overlib.js
 howto/loop-counter.pl
 howto/trav-string.pl
+overlib.js
+style.css
 t/arith/mixed.t
 t/arith/trig.t
 t/array/copy.t
@@ -17,8 +17,8 @@ t/array/foreach.t
 t/array/index.t
 t/array/pop.t
 t/array/shift.t
-t/array/sort.t
 t/array/sort-num.t
+t/array/sort.t
 t/call/0arg.t
 t/call/1arg.t
 t/call/2arg.t
@@ -50,4 +50,3 @@ t/string/index-const.t
 t/string/index-var.t
 t/string/ipol.t
 t/string/tr.t
-

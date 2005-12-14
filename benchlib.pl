@@ -17,6 +17,7 @@ sub main'runtest
 {
     local($scale, $code) = @_;
     print "Date: " . &time2iso() . "\n";
+    print "Test: $0\n";
     print "Perl: $^X $]\n";
     $scale = int($scale * $cpu_factor);
     $scale = 1 if $scale < 1;

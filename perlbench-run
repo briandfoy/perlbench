@@ -46,6 +46,10 @@ print INDEX "<html>\n";
 print INDEX "<head>\n";
 print INDEX " <title>PerlBench $HOSTNAME_HTML " . time2iso() . "</title>\n";
 print INDEX qq( <link rel="stylesheet" href="style.css" type="text/css">\n);
+link("style.css", "$dir/style.css") || do {
+    require File::Copy;
+    File::Copy::copy("style.css", "$dir/style.css");
+};
 print INDEX "</head>\n";
 print INDEX "<body>\n";
 print INDEX " <h1>PerlBench results from $HOSTNAME_HTML at " . time2iso() . "</h1>\n";

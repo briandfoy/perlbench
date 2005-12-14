@@ -46,13 +46,17 @@ print INDEX "<html>\n";
 print INDEX "<head>\n";
 print INDEX " <title>PerlBench $HOSTNAME_HTML " . time2iso() . "</title>\n";
 print INDEX qq( <link rel="stylesheet" href="style.css" type="text/css">\n);
-link("style.css", "$dir/style.css") || do {
-    require File::Copy;
-    File::Copy::copy("style.css", "$dir/style.css");
-};
+link_or_copy("style.css");
+my $use_overlib;
+if (link_or_copy("overlib.js")) {
+    $use_overlib++;
+    print INDEX qq( <script type="text/javascript" src="overlib.js"></script>\n);
+}
+
 print INDEX "</head>\n";
 print INDEX "<body>\n";
-print INDEX " <h1>PerlBench results from $HOSTNAME_HTML at " . time2iso() . "</h1>\n";
+print INDEX qq(<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>\n);
+print INDEX qq(<h1>PerlBench results from $HOSTNAME_HTML at " . time2iso() . "</h1>\n);
 
 # Show perl configurations
 my %config_summary;
@@ -131,7 +135,11 @@ print " " x 20;
 for my $p (@perls) {
     printf "%8s", $p->{label};
     my $h = htmlesc($p->{label});
-    print INDEX qq(  <th><a href="CONFIG-$h.txt">$h</a></th>\n);
+    my $overlib_attr = "";
+    if ($use_overlib && $p->{name}) {
+	$overlib_attr = qq( onmouseover="return overlib('$p->{name}');" onmouseout="return nd();");
+    }
+    print INDEX qq(  <th><a href="CONFIG-$h.txt"$overlib_attr>$h</a></th>\n);
 }
 print "\n";
 print INDEX " </tr>\n";
@@ -160,9 +168,6 @@ for $test (@tests) {
     (my $save_file_link = $save_file) =~ s,^\Q$dir\E/,,;
     $save_file_link = htmlesc($save_file_link);
 
-    printf "%-20s", $name;
-    print INDEX qq( <tr>\n  <th align=left><a href="$save_file_link">) . htmlesc($name) . "</a></th>\n";
-
     my %prop;
     while (<T>) {
 	print SAVE $_;
@@ -177,6 +182,13 @@ for $test (@tests) {
     }
     close(T);
     close(SAVE) || die "Can't write $save_file: $!";
+
+    printf "%-20s", $name;
+    my $overlib_attr = "";
+    if ($use_overlib && $prop{name}) {
+	$overlib_attr = qq( onmouseover="return overlib('$prop{name}');" onmouseout="return nd();");
+    }
+    print INDEX qq( <tr>\n  <th align=left><a href="$save_file_link"$overlib_attr>) . htmlesc($name) . "</a></th>\n";
 
     my $scale;
     my $p;
@@ -335,6 +347,13 @@ sub file {
     }
 }
 
+sub link_or_copy {
+    my $f = shift;
+    link($f, "$dir/$f") || do {
+	require File::Copy;
+	File::Copy::copy($f, $f);
+    }
+}
 sub htmlesc {
     my $str = shift;
     $str =~ s/&/&amp;/g;

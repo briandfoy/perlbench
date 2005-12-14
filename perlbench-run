@@ -56,7 +56,7 @@ if (link_or_copy("overlib.js")) {
 print INDEX "</head>\n";
 print INDEX "<body>\n";
 print INDEX qq(<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>\n);
-print INDEX qq(<h1>PerlBench results from $HOSTNAME_HTML at " . time2iso() . "</h1>\n);
+print INDEX qq(<h1>PerlBench results from $HOSTNAME_HTML at ) . time2iso() . qq(</h1>\n);
 
 # Show perl configurations
 my %config_summary;

@@ -278,7 +278,6 @@ print INDEX "</p>\n";
 print INDEX "<table border=1>\n";
 print INDEX " <tr>\n  <th>&nbsp</th>\n";
 for my $p (@perls) {
-    printf "%8s", $p->{label};
     my $h = htmlesc($p->{label});
     print INDEX qq(  <th><a href="CONFIG-$h.txt">$h</a></th>\n);
 }

@@ -114,15 +114,21 @@ if ($opt_t) {
 @tests = sort @tests;
 
 # Try to run the empty test in order to time the loop
+my %empty_cycles;
 for my $p (@perls) {
-    $p->run_cmd(*P, "empty.t", $factor);
-    while (<P>) {
-        next unless /^Cycles-Per-Sec:\s*(\S+)/;
-        $p->{empty_cycles} = int($1);
-    }
-    close(P);
-    die "Could not determine empty test speed for $p->{path}"
-        unless  $p->{empty_cycles};
+    $p->{empty_cycles} = ($empty_cycles{$p->{path}} ||= do {
+        my $empty_cycles;
+        $p->run_cmd(*P, "empty.t", $factor);
+	while (<P>) {
+            next unless /^Cycles-Per-Sec:\s*(\S+)/;
+            $empty_cycles = int($1);
+	    last;
+        }
+        close(P);
+        die "Could not determine empty test speed for $p->{path}"
+            unless  $empty_cycles;
+        $empty_cycles;
+    });
     $p->{point_sum} = 0;
 }
 

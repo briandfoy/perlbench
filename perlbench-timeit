@@ -26,8 +26,11 @@ print sec_f($t, $d), "\n";
 
 if (my $o = $res->{loop_overhead_relative}) {
     $o *= 100;
-    printf "(%.*f%% loop overhead)\n", ($o > 10 ? 0 : 1), $o
-	if $o > 10 || $opt{'print-loop-overhead'};
+    if ($o > 10 || $opt{'print-loop-overhead'}) {
+	printf "(%.*f%% loop overhead", ($o > 10 ? 0 : 1), $o;
+	print ", try higher --repeat values" if $o > 10;
+	print ")\n";
+    }
 }
 
 if (0) {

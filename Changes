@@ -1,3 +1,17 @@
+2005-12-19   Gisle Aas <gisle@ActiveState.com>
+
+   Release 0.92
+
+   Added new timing framework in the PerlBench module.
+
+   Added script 'perlbench-timeit'.
+
+   Renamed 'bench' as 'perlbench-run'.
+
+   Moved old style benchmarks to the 'benchmarks' directory.
+
+
+
 2005-12-15   Gisle Aas <gisle@ActiveState.com>
 
    Release 0.91

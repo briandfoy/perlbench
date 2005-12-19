@@ -12,7 +12,7 @@ GetOptions(\%opt,
    'print-loop-overhead',
 ) || usage();
 
-my $code = shift || @ARGV;
+my $code = shift || usage();
 usage() if @ARGV;
 
 $code .= ";" unless $code =~ /;\s*$/;

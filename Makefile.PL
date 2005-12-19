@@ -3,18 +3,8 @@
 use ExtUtils::MakeMaker;
 
 WriteMakefile (
-   NAME    => 'perlbench',
-   VERSION => '0.91',
-   dist    => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
+   NAME => 'perlbench',
+   VERSION_FROM => 'lib/PerlBench.pm',
+   EXE_FILES => [qw(perlbench-timeit)],
+   dist => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
 );
-
-
-sub MY::test
-{
-    return <<'EOT';
-
-test:
-	@echo "No tests.  You might want to run the 'bench' program."
-
-EOT
-}

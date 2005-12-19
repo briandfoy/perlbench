@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 use strict;
-use PerlBench qw(timeit);
+use PerlBench qw(timeit sec_f);
 use Getopt::Long qw(GetOptions);
 
 my %opt;
@@ -22,37 +22,7 @@ die "Failed" unless $res;
 
 my $t = $res->{$opt{use_avg} ? "avg" : "med"};
 my $d = $res->{stddev}*2;
-my $u = "s";
-my $f = 1;
-
-if ($t < 1e-6) {
-    $f = 1e9;
-    $u = "ns";
-}
-elsif ($t < 1e-3) {
-    $f = 1e6;
-    $u = "µs";
-}
-elsif ($t < 1) {
-    $f = 1e3;
-    $u = "ms";
-}
-
-if ($f != 1) {
-    $_ *= $f for $t, $d;
-}
-
-my $p = 0;
-if ($d < 0.03) {
-    $p = 3;
-}
-elsif ($d < 0.3) {
-    $p = 2;
-}
-elsif ($d < 3) {
-    $p = 1;
-}
-printf "%.*f %s ±%.*f\n", $p, $t, $u, $p, $d;
+print sec_f($t, $d), "\n";
 
 if (my $o = $res->{loop_overhead_relative}) {
     $o *= 100;

@@ -3,9 +3,9 @@ Perl benchmark suite
 
 This is a Perl benchmark suite.  It can be used to compare the
 relative speed of different versions of Perl.  You run the benchmark
-by starting the 'bench' script giving the path-name of various Perls
-you want to test as argument.  The bench program takes the following
-optional parameters:
+by starting the 'perlbench-run' script giving the path-name of various
+Perls you want to test as argument.  The perlbench-run program takes
+the following optional parameters:
 
   -s               don't scale numbers (so that first perl is always 100)
   -t <filter>      only tests that match <filter> regex are timed
@@ -18,15 +18,15 @@ optional parameters:
 Creating new tests
 ------------------
 
-The individual tests are found in a directory called "t".  They expect
-to be started with at least a single number as argument.  This number
-is the CPU speed factor as calculated by the 'cpu_factor' program.
-This factor is used to scale the number of iterations that the test
-must run to give measurable timing.
+The individual tests are found in a directory called "benchmarks".
+They expect to be started with at least a single number as argument.
+This number is the CPU speed factor as calculated by the 'cpu_factor'
+program.  This factor is used to scale the number of iterations that
+the test must run to give measurable timing.
 
-A new test is created by making a new file under the "t" directory.
-The filename should end with the "*.t" suffix.  A test should look
-like this:
+A new test is created by making a new file under the "benchmarks"
+directory.  The filename should end with the "*.t" suffix.  A test
+should look like this:
 
   # Name: Regexp matching
   # Require: 4
@@ -59,98 +59,7 @@ as the body inside a loop.
 If you want to contribute some additional tests, please send them to
 <gisle@aas.no>.
 
-
-
-Some results
-------------
-
-This is the result of running the tests on a RedHat Linux 4.0 system
-running on a 90Mhz Intel Pentium.  The compiler called 'cc' is gcc-2.7.2.
-
-
-A) perl-5.004
-	path        = /local/perl/5.004/bin/perl
-	cc          = cc
-	optimize    = -O2
-	ccflags     = -Dbool=char -DHAS_BOOL -I/usr/local/include
-	usemymalloc = n
-
-B) perl-5.00404
-	path        = /local/perl/5.004_04/bin/perl
-	cc          = cc
-	optimize    = -O2
-	ccflags     = -Dbool=char -DHAS_BOOL -I/usr/local/include
-	usemymalloc = n
-
-C) perl-5.00456
-	path        = /local/perl/5.004_56/bin/perl
-	cc          = cc
-	optimize    = -O2
-	ccflags     = -Dbool=char -DHAS_BOOL -I/usr/local/include
-	usemymalloc = n
-
-D) perl-5.003
-	path        = /local/perl/5.003/bin/perl
-	cc          = cc
-	optimize    = -O2
-	ccflags     = -Dbool=char -DHAS_BOOL
-	usemymalloc = n
-
-E) perl-5.002
-	path        = /local/perl/5.002/bin/perl
-	cc          = cc
-	optimize    = -O2
-	ccflags     = -D__USE_BSD_SIGNAL -Dbool=char -DHAS_BOOL -I/usr/local/include
-	usemymalloc = n
-
-F) perl-4.036
-	path        = /local/perl/4.036/bin/perl
-
-                           A       B       C       D       E       F
-                        ----    ----    ----    ----    ----    ----
-arith/mixed              100     107     100      98     103      71
-arith/trig               100      98     101      85      96      70
-array/copy               100      98      74      62      59     172
-array/foreach            100      90      91     121     127     184
-array/index              100     107      96     118     116     113
-array/pop                100      97      77      78      70     226
-array/shift              100      99      80      75      68     216
-call/0arg-noamp          100      86      30      39      39     N/A
-call/0arg                100      87      30      38      37      42
-call/1arg                100      90      38      45      44      44
-call/2arg                100      93      40      50      48      44
-call/9arg                100     106      99      91      88     N/A
-call/empty               100      96      63      76      92      86
-call/fib                 100      98      90     105     107     N/A
-call/method              100      91      71      79      80     N/A
-call/wantarray           100      97      82      95      97     N/A
-hash/copy                100     104      90     103      97     125
-hash/each                100      92      76      91      97     131
-hash/foreach-sort        100     105      86     108     111      81
-hash/foreach             100      96      84     104     100     N/A
-hash/get                 100     123     101      93      94      47
-hash/set                 100      93      89     100     101      60
-loop/for-c               100      80      85      95      94      43
-loop/for-interval        100     102      82     116     114      54
-loop/getline             100     106      92     101      95     101
-loop/while-my            100      94      92     103     101     N/A
-loop/while               100      88      89     100      98      50
-re/const                 100      98     178     104      82      62
-re/w                     100      99     101     115     103      61
-startup/fewmod           100      95      95     137     132     N/A
-startup/lotsofsub        100      98      97     105     103     182
-startup/noprog           100     100      99     106     104     148
-string/base64            100     102     190     100      99     N/A
-string/htmlparser        100      98     118      93      90     N/A
-string/index-const       100      98     105     112     103     131
-string/index-var         100     197     199     142     153     299
-string/ipol              100      87      85     122     122      28
-
-AVERAGE                  100     100      92      95      94     106
-
-
----------------------------------------------------------------------
-
+-----------------------------------------------------------------------
 © 1997,1998,1999,2005 Gisle Aas. All rights reserved.
 
 This is free software; you can redistribute it and/or modify it under

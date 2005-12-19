@@ -107,7 +107,7 @@ die "No test directory found" unless -d 't';
 my @tests;
 
 use File::Find;
-find(sub { /\.t$/ && push(@tests, $File::Find::name) }, "t");
+find(sub { /\.t$/ && push(@tests, $File::Find::name) }, "benchmarks");
 if ($opt_t) {
     @tests = grep /$opt_t/o, @tests;
 }
@@ -165,7 +165,7 @@ for $test (@tests) {
     }
 
     my $name = $test;
-    $name =~ s,^t/,,;
+    $name =~ s,^benchmarks/,,;
     $name =~ s,\.t$,,;
 
     my $save_file = "$dir/$name/test.txt";

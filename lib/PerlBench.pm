@@ -36,7 +36,7 @@ sub timeit {
 		$count *= 2;
 		next;
 	    }
-	    $count = int($count * ($enough / $t) * 1.05);
+	    $count = int($count * ($enough / $t) * 1.05) + 1;
 	}
 	($count, $repeat);
     };

@@ -2,7 +2,7 @@ package PerlBench;
 
 use strict;
 use base 'Exporter';
-our @EXPORT_OK = qw(timeit sec_f);
+our @EXPORT_OK = qw(timeit make_timeit_sub_code sec_f);
 
 our $VERSION = "0.92";
 
@@ -167,11 +167,13 @@ sub {
     INIT: {
         package main;
 EOT1
+
     }
     my($BEFORE_S, $BEFORE_US) = gettimeofday();
     while (--$COUNT) {
         package main;
 EOT2
+
     }
     my($AFTER_S, $AFTER_US) = gettimeofday();
     return ($AFTER_S - $BEFORE_S) + ($AFTER_US - $BEFORE_US)/1e6;

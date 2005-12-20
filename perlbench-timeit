@@ -1,13 +1,14 @@
 #!/usr/bin/perl -w
 
 use strict;
-use PerlBench qw(timeit sec_f);
+use PerlBench qw(timeit sec_f make_timeit_sub_code);
 use Getopt::Long qw(GetOptions);
 
 my %opt;
 GetOptions(\%opt,
    'repeat=i',
    'enough=f',
+   'show-timing-code',
    'show-avg',
    'show-loop-overhead',
    'verbose+',
@@ -21,6 +22,13 @@ my $delim = qr/;;;/;
 my $init;
 if ($code =~ $delim) {
     ($init, $code) = split($delim, $code, 2);
+}
+
+if ($opt{'show-timing-code'}) {
+    print "use Time::HiRes qw(gettimeofday);\n\nprint ";
+    print make_timeit_sub_code($code, $init, 999, $opt{repeat});
+    print "->();\n";
+    exit;
 }
 
 my $res = timeit($code, init => $init, repeat => $opt{repeat}, enough => $opt{enough}, verbose => $opt{verbose});

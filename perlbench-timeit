@@ -9,8 +9,8 @@ GetOptions(\%opt,
    'repeat=i',
    'enough=f',
    'show-avg',
+   'show-loop-overhead',
    'verbose+',
-   'print-loop-overhead',
 ) || usage();
 
 my $code = shift || usage();
@@ -27,7 +27,7 @@ print "avg = ", sec_f($res->{avg}, 2 * $res->{stddev}), "\n" if $opt{'show-avg'}
 
 if (my $o = $res->{loop_overhead_relative}) {
     $o *= 100;
-    if ($o > 10 || $opt{'print-loop-overhead'}) {
+    if ($o > 10 || $opt{'show-loop-overhead'} || $opt{verbose}) {
 	printf "(%.*f%% loop overhead", ($o > 10 ? 0 : 1), $o;
 	print ", try higher --repeat values" if $o > 10;
 	print ")\n";

@@ -6,9 +6,10 @@ use Getopt::Long qw(GetOptions);
 
 my %opt;
 GetOptions(\%opt,
-   'repeat=n',
-   'use-avg',
-   'verbose',
+   'repeat=i',
+   'enough=f',
+   'show-avg',
+   'verbose+',
    'print-loop-overhead',
 ) || usage();
 
@@ -17,12 +18,12 @@ usage() if @ARGV;
 
 $code .= ";" unless $code =~ /;\s*$/;
 
-my $res = timeit($code, repeat => $opt{repeat}, verbose => $opt{verbose});
+my $res = timeit($code, repeat => $opt{repeat}, enough => $opt{enough}, verbose => $opt{verbose});
 die "Failed" unless $res;
 
-my $t = $res->{$opt{use_avg} ? "avg" : "med"};
-my $d = $res->{stddev}*2;
-print sec_f($t, $d), "\n";
+print "med = " if $opt{'show-avg'} || $opt{verbose};
+print sec_f($res->{med}, $res->{med} - $res->{min}), "\n";
+print "avg = ", sec_f($res->{avg}, 2 * $res->{stddev}), "\n" if $opt{'show-avg'} || $opt{verbose};
 
 if (my $o = $res->{loop_overhead_relative}) {
     $o *= 100;
@@ -33,11 +34,10 @@ if (my $o = $res->{loop_overhead_relative}) {
     }
 }
 
-if (0) {
-    require Data::Dump;
+if ($opt{verbose} && $opt{verbose} > 1 && eval { require Data::Dump }) {
     delete $res->{x};
     delete $res->{t};
-    Data::Dump::dump($res);
+    print "\n\$res = ", Data::Dump::dump($res), "\n";
 }
 
 sub usage {

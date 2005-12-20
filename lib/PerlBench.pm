@@ -158,18 +158,23 @@ sub make_timeit_sub_code {
     die unless $loop_count > 0;
     die if $loop_count + 1 == $loop_count;  # too large
     $repeat_count ||= 1;
-    return <<EOT1 . ($code x $repeat_count) . <<'EOT2';
+    return <<EOT1 . $code . <<'EOT2' . ($code x $repeat_count) . <<'EOT3';
 sub {
     my \$COUNT = $loop_count;
     \$COUNT++;
-    my(\$BEFORE_S, \$BEFORE_US) = gettimeofday();
-    while (--\$COUNT) {
+    {
+        package main;
 EOT1
+    }
+    my($BEFORE_S, $BEFORE_US) = gettimeofday();
+    while (--$COUNT) {
+        package main;
+EOT2
     }
     my($AFTER_S, $AFTER_US) = gettimeofday();
     return ($AFTER_S - $BEFORE_S) + ($AFTER_US - $BEFORE_US)/1e6;
 }
-EOT2
+EOT3
 }
 
 BEGIN {

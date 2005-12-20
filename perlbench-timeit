@@ -1,0 +1,46 @@
+#!/usr/bin/perl -w
+
+use strict;
+use PerlBench qw(timeit sec_f);
+use Getopt::Long qw(GetOptions);
+
+my %opt;
+GetOptions(\%opt,
+   'repeat=n',
+   'use-avg',
+   'verbose',
+   'print-loop-overhead',
+) || usage();
+
+my $code = shift || usage();
+usage() if @ARGV;
+
+$code .= ";" unless $code =~ /;\s*$/;
+
+my $res = timeit($code, repeat => $opt{repeat}, verbose => $opt{verbose});
+die "Failed" unless $res;
+
+my $t = $res->{$opt{use_avg} ? "avg" : "med"};
+my $d = $res->{stddev}*2;
+print sec_f($t, $d), "\n";
+
+if (my $o = $res->{loop_overhead_relative}) {
+    $o *= 100;
+    if ($o > 10 || $opt{'print-loop-overhead'}) {
+	printf "(%.*f%% loop overhead", ($o > 10 ? 0 : 1), $o;
+	print ", try higher --repeat values" if $o > 10;
+	print ")\n";
+    }
+}
+
+if (0) {
+    require Data::Dump;
+    delete $res->{x};
+    delete $res->{t};
+    Data::Dump::dump($res);
+}
+
+sub usage {
+    (my $progname = $0) =~ s,.*/,,;
+    die "Usage: $progname [options] <perlcode>\n";
+}

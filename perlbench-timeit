@@ -17,8 +17,13 @@ my $code = shift || usage();
 usage() if @ARGV;
 
 $code .= ";" unless $code =~ /;\s*$/;
+my $delim = qr/;;;/;
+my $init;
+if ($code =~ $delim) {
+    ($init, $code) = split($delim, $code, 2);
+}
 
-my $res = timeit($code, repeat => $opt{repeat}, enough => $opt{enough}, verbose => $opt{verbose});
+my $res = timeit($code, init => $init, repeat => $opt{repeat}, enough => $opt{enough}, verbose => $opt{verbose});
 die "Failed" unless $res;
 
 print "med = " if $opt{'show-avg'} || $opt{verbose};

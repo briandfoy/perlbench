@@ -13,6 +13,7 @@ use Carp qw(croak);
 
 sub timeit {
     my($code, %opt) = @_;
+    my $init = $opt{init};
 
     # XXX auto determine how long we need to time stuff
     my $enough = $opt{enough} || 0.5;
@@ -25,7 +26,7 @@ sub timeit {
 	my $repeat = $opt{repeat} || 1;
 	while (1) {
 	    print STDERR "#  $count ==> " if $opt{verbose};
-	    my $t = timeit_once($code, $count, $repeat);
+	    my $t = timeit_once($code, $init, $count, $repeat);
 	    print STDERR sec_f($t, undef), "\n" if $opt{verbose};
 	    last if $t > $enough;
 	    if ($t < 0.00001) {
@@ -59,7 +60,7 @@ sub timeit {
     print $fh "use Time::HiRes qw(gettimeofday);\n";
     print $fh "my \@TIMEIT = (\n";
     for my $e (@experiment) {
-	print $fh make_timeit_sub_code($code, $e->{loop_count}, $e->{repeat_count}), ",\n";
+	print $fh make_timeit_sub_code($code, $init, $e->{loop_count}, $e->{repeat_count}), ",\n";
     }
     print $fh ");\n";
 
@@ -153,16 +154,17 @@ sub make_timeit_sub {
 }
 
 sub make_timeit_sub_code {
-    my($code, $loop_count, $repeat_count) = @_;
+    my($code, $init, $loop_count, $repeat_count) = @_;
     $loop_count = int($loop_count);
     die unless $loop_count > 0;
     die if $loop_count + 1 == $loop_count;  # too large
     $repeat_count ||= 1;
-    return <<EOT1 . $code . <<'EOT2' . ($code x $repeat_count) . <<'EOT3';
+    $init = "" unless defined $init;
+    return <<EOT1 . "$init;$code" . <<'EOT2' . ($code x $repeat_count) . <<'EOT3';
 sub {
     my \$COUNT = $loop_count;
     \$COUNT++;
-    {
+    INIT: {
         package main;
 EOT1
     }

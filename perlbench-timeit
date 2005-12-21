@@ -25,7 +25,7 @@ if ($code =~ $delim) {
 }
 
 if ($opt{'show-timing-code'}) {
-    print "use Time::HiRes qw(gettimeofday);\n\nprint ";
+    print "require Time::HiRes;\n\nprint ";
     print make_timeit_sub_code($code, $init, 999, $opt{repeat});
     print "->();\n";
     exit;

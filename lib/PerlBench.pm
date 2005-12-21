@@ -57,10 +57,11 @@ sub timeit {
     open(my $fh, ">", $pl) || die "Can't create $pl: $!";
     print $fh "#!perl\n";
     print $fh "use strict;\n";
-    print $fh "use Time::HiRes qw(gettimeofday);\n";
+    print $fh "require Time::HiRes;\n";
+    print $fh "{\n    $init;\n" if $init;
     print $fh "my \@TIMEIT = (\n";
     for my $e (@experiment) {
-	print $fh make_timeit_sub_code($code, $init, $e->{loop_count}, $e->{repeat_count}), ",\n";
+	print $fh make_timeit_sub_code($code, undef, $e->{loop_count}, $e->{repeat_count}), ",\n";
     }
     print $fh ");\n";
 
@@ -76,6 +77,7 @@ for (1.. $trials) {
 }
 print "---\n";
 EOT
+    print $fh "}\n" if $init;
     close($fh) || die "Can't write $pl: $!";
 
     print STDERR "# Running tests...\n" if $opt{verbose};
@@ -164,18 +166,15 @@ sub make_timeit_sub_code {
 sub {
     my \$COUNT = $loop_count;
     \$COUNT++;
-    INIT: {
-        package main;
+    package main;
 EOT1
 
-    }
-    my($BEFORE_S, $BEFORE_US) = gettimeofday();
+    my($BEFORE_S, $BEFORE_US) = Time::HiRes::gettimeofday();
     while (--$COUNT) {
-        package main;
 EOT2
 
     }
-    my($AFTER_S, $AFTER_US) = gettimeofday();
+    my($AFTER_S, $AFTER_US) = Time::HiRes::gettimeofday();
     return ($AFTER_S - $BEFORE_S) + ($AFTER_US - $BEFORE_US)/1e6;
 }
 EOT3

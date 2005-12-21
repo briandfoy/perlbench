@@ -4,6 +4,12 @@ use strict;
 use PerlBench qw(timeit sec_f make_timeit_sub_code);
 use Getopt::Long qw(GetOptions);
 
+sub compilable {  # early so that no lexicals are in scope
+    no strict;
+    eval qq(#line 1 "code"\n{ $_[0] });
+    return !$@;
+}
+
 my %opt;
 GetOptions(\%opt,
    'repeat=i',
@@ -18,6 +24,10 @@ my $code = shift || usage();
 usage() if @ARGV;
 
 $code .= ";" unless $code =~ /;\s*$/;
+unless (compilable($code)) {
+    die "The speficied code does not compile.\n$@";
+}
+
 my $delim = qr/;;;/;
 my $init;
 if ($code =~ $delim) {

@@ -39,9 +39,9 @@ if (-d $hostdir) {
     # check that this host look similar
 }
 else {
-    mkpath($hostdir, 1, 0755) || die "Can't create $hostdir: $!";
-    system("uname -a >$hostdir/uname");
-    system("cp /proc/cpuinfo $hostdir/cpuinfo");
+    mkpath($hostdir, 0, 0755) || die "Can't create $hostdir: $!";
+    system("uname -a >$hostdir/uname-a.txt");
+    system("cp /proc/cpuinfo $hostdir/cpuinfo.txt") if -f "/proc/cpuinfo";
 }
 
 print "Perl: $perl\n";
@@ -52,13 +52,13 @@ if (-d $perldir) {
     # check that this perl looks similar
 }
 else {
-    mkpath($perldir, 1, 0755);
+    mkpath($perldir, 0, 0755);
     system("$perl -v >$perldir/version.txt");
     system("$perl -V >$perldir/config-summary.txt");
 }
 
 for my $test (@tests) {
-    print "Test: $test\n";
+    print "Test-File: $test\n";
     run_test($test);
 }
 
@@ -109,11 +109,11 @@ sub run_test {
     my $resdir = $test;
     $resdir =~ s,^benchmarks/,,;
     $resdir =~ s,\.b$,,;
-    $resdir = "$perldir/$resdir";
-    mkpath($resdir, 1, 0755);
+    $resdir = "$perldir/tests/$resdir";
+    mkpath($resdir, 0, 0755);
     my $resfile = $start;
     $resfile =~ s/ /T/;  # spaceless iso format
-    $resfile = "$resdir/$resfile";
+    $resfile = "$resdir/$resfile.pb";
     open($fh, ">", $resfile) || die "Can't create $resfile: $!";
     my $end = substr(time2iso(), 11);
 
@@ -131,7 +131,7 @@ sub run_test {
     print $fh "Std-Dev: $res->{stddev}\n";
 
     close($fh) || die "Can't write $resfile: $!";
-    print "Result: $resfile\n";
+    print "Test-Result: $resfile\n";
 }
 
 sub print_raw_res {

@@ -1,0 +1,154 @@
+#!/usr/bin/perl -w
+
+use strict;
+
+BEGIN {
+    unshift(@INC, "lib") if -f "lib/PerlBench.pm";
+}
+
+use PerlBench qw(timeit);
+use Sys::Hostname qw(hostname);
+use Digest::MD5 qw(md5_hex);
+use File::Path qw(mkpath);
+use Getopt::Long qw(GetOptions);
+
+my $resdir = "perlbench-results";
+my $hostname = hostname();
+my $perl = $^X;
+my $VERBOSE = 0;
+
+my %opt;
+GetOptions(
+   'verbose+' => \$VERBOSE,
+) || usage();
+
+my @tests = @ARGV ? (@ARGV) : do {
+    die "Can't find any benchmarks directory" unless -d "benchmarks";
+    use File::Find;
+    my @f;
+    File::Find::find(sub { /\.b$/ && push(@f, $File::Find::name) }, "benchmarks");
+    sort @f;
+};
+die unless @tests;
+
+$| = 1;
+
+print "Host: $hostname\n";
+my $hostdir = "$resdir/$hostname";
+if (-d $hostdir) {
+    # check that this host look similar
+}
+else {
+    mkpath($hostdir, 1, 0755) || die "Can't create $hostdir: $!";
+    system("uname -a >$hostdir/uname");
+    system("cp /proc/cpuinfo $hostdir/cpuinfo");
+}
+
+print "Perl: $perl\n";
+my $perl_V = qx(perl -V);
+
+my $perldir = "$hostdir/perls/" . md5_hex($perl_V);
+if (-d $perldir) {
+    # check that this perl looks similar
+}
+else {
+    mkpath($perldir, 1, 0755);
+    system("$perl -v >$perldir/version.txt");
+    system("$perl -V >$perldir/config-summary.txt");
+}
+
+for my $test (@tests) {
+    print "Test: $test\n";
+    run_test($test);
+}
+
+
+sub run_test {
+    my $test = shift;
+    open(my $fh, "<", $test) || die "Can't open $test: $!";
+    my $header = 1;
+    my %prop;
+    my @init;
+    my @code;
+    while (<$fh>) {
+	if ($header) {
+	    if (/^\#\s*(\w+)\s*:\s*(.*)/) {
+		$prop{lc($1)} = $2;
+	    }
+	    else {
+		$header = 0;
+	    }
+	}
+	else {
+	    if (/^\#\#\#\s*TEST\s*$/) {
+		die if @init;
+		@init = @code;
+		@code = ();
+	    }
+	    else {
+		push(@code, $_);
+	    }
+	}
+    }
+    close($fh);
+
+    print "Test-Name: $prop{name}\n" if $prop{name};
+
+    trim(\@init);
+    trim(\@code);
+
+    my %opt;
+    $opt{verbose} = 1 if $VERBOSE;
+    $opt{init} = join("", @init) if @init;
+    $opt{repeat} = $prop{repeat} if $prop{repeat};
+    $opt{enough} = $prop{enough} if $prop{enough};
+
+    my $start = time2iso();
+    my $res = timeit(join("", @code), %opt);
+
+    my $resdir = $test;
+    $resdir =~ s,^benchmarks/,,;
+    $resdir =~ s,\.b$,,;
+    $resdir = "$perldir/$resdir";
+    mkpath($resdir, 1, 0755);
+    my $resfile = $start;
+    $resfile =~ s/ /T/;  # spaceless iso format
+    $resfile = "$resdir/$resfile";
+    open($fh, ">", $resfile) || die "Can't create $resfile: $!";
+    my $end = substr(time2iso(), 11);
+
+    print $fh "Date: $start ($end)\n";
+    print $fh "Test: $test\n";
+    print $fh "Perl: $perl $]\n";
+    print $fh "Hostname: $hostname\n";
+    print $fh "Cycles: $res->{count}\n";
+    printf $fh "Loop-Overhead: %.1f%%\n", 100*$res->{loop_overhead_relative};
+    print $fh "Samples: $res->{n}\n";
+    print $fh "Min: $res->{min}\n";
+    print $fh "Med: $res->{med}\n";
+    print $fh "Max: $res->{max}\n";
+    print $fh "Avg: $res->{avg}\n";
+    print $fh "Std-Dev: $res->{stddev}\n";
+
+    close($fh) || die "Can't write $resfile: $!";
+    print "Result: $resfile\n";
+}
+
+sub print_raw_res {
+    my $res = shift;
+}
+
+sub time2iso
+{
+    my $time = shift;
+    $time = time unless defined $time;
+    my($sec,$min,$hour,$mday,$mon,$year) = localtime($time);
+    return sprintf("%04d-%02d-%02d %02d:%02d:%02d",
+            $year+1900, $mon+1, $mday, $hour, $min, $sec);
+}
+
+sub trim {
+    my $lines = shift;
+    shift(@$lines) while @$lines && $lines->[0] =~ /^$/;
+    pop(@$lines) while @$lines && $lines->[-1] =~ /^$/;
+}

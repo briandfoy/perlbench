@@ -45,7 +45,7 @@ else {
 }
 
 print "Perl: $perl\n";
-my $perl_V = qx(perl -V);
+my $perl_V = qx($perl -V);
 
 my $perldir = "$hostdir/perls/" . md5_hex($perl_V);
 if (-d $perldir) {

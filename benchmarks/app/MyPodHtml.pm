@@ -1,4 +1,6 @@
-package Pod::Html;
+# This is a snapshot of Pod::Html used for benchmarking purposes.
+
+package MyPodHtml;
 use strict;
 require Exporter;
 
@@ -895,6 +897,7 @@ sub scan_podpath {
     chdir($pwd)
 	|| die "$0: error changing to directory $pwd: $!\n";
 
+    if (0) {
     # cache the item list for later use
     warn "caching items for later use\n" if $Verbose;
     open(CACHE, ">$Itemcache") ||
@@ -918,6 +921,7 @@ sub scan_podpath {
     }
 
     close(CACHE);
+    } # if (0)
 }
 
 #
@@ -1660,7 +1664,7 @@ sub process_text1($$;$$){
 
             # warning; show some text.
             $linktext = $opar unless defined $linktext;
-            warn "$0: $Podfile: cannot resolve L<$opar> in paragraph $Paragraph.\n" unless $Quiet;
+            #warn "$0: $Podfile: cannot resolve L<$opar> in paragraph $Paragraph.\n" unless $Quiet;
         }
 
         # now we have a URL or just plain code

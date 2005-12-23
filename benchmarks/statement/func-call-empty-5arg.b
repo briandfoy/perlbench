@@ -1,4 +1,4 @@
-# Name: Call an empty function
+# Name: Call an empty function with 5 arguments
 # Repeat: 20
 
 sub empty {

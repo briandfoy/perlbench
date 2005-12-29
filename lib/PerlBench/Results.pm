@@ -58,7 +58,20 @@ sub _scan {
 		}
 	    }
 	    die "Can't determine perl version from $version_txt" unless $perlhash->{version};
+	    close($fh);
+
+	    if (open(my $fh, "<", "$perldir/config-summary.txt")) {
+		while (<$fh>) {
+		    if (/^Summary of/ && / patch\s+(\d+)/) {
+			$perlhash->{version} .= "-p$1";
+			$perlhash->{name} .= " patch $1";
+		    }
+		}
+		close($fh);
+	    }
+
 	    $perlhash->{dir} = $perldir;
+	    $perlhash->{host} = $hostname;
 	}
     }
 }
@@ -82,6 +95,29 @@ sub _read_pb_file {
     close($fh);
     #$hash{file} = $file;
     return \%hash;
+}
+
+sub hosts {
+    my $self = shift;
+    die unless wantarray;
+    return sort keys %{$self->{h} || {}};
+}
+
+sub perls {
+    my($self, @hosts) = @_;
+    die unless wantarray;
+    @hosts = $self->hosts unless @hosts;
+    my @p;
+    for my $h (@hosts) {
+	push(@p, values %{$self->{h}{$h}{p}});
+    }
+    @p = sort { _vers_cmp($a->{version}, $b->{version}) } @p;
+    return @p;
+}
+
+sub _vers_cmp {
+    my($v1, $v2) = @_;
+    return $v1 cmp $v2;
 }
 
 1;

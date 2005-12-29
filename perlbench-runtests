@@ -40,21 +40,26 @@ if (-d $hostdir) {
 }
 else {
     mkpath($hostdir, 0, 0755) || die "Can't create $hostdir: $!";
+    file("$hostdir/osname.txt", "$^O\n");
     system("uname -a >$hostdir/uname-a.txt");
+    system("uname -X >$hostdir/uname-X.txt") if $^O eq "solaris";
     system("cp /proc/cpuinfo $hostdir/cpuinfo.txt") if -f "/proc/cpuinfo";
 }
 
 print "Perl: $perl\n";
 my $perl_V = qx($perl -V);
 
-my $perldir = "$hostdir/perls/" . md5_hex($perl_V);
+my $perldir = "$hostdir/perls/" . md5_hex("$perl\0$perl_V");
 if (-d $perldir) {
     # check that this perl looks similar
+    die "perl -V output doesn't match"
+	unless file("$perldir/config-summary.txt") eq $perl_V;
 }
 else {
     mkpath($perldir, 0, 0755);
+    file("$perldir/path.txt", $perl);
     system(qq($perl -v >$perldir/version.txt));
-    system(qq($perl -V >$perldir/config-summary.txt));
+    file("$perldir/config-summary.txt", $perl_V);
     system(qq($perl -MConfig=config_sh -e "print &config_sh()" >$perldir/config.sh));
 }
 
@@ -148,4 +153,21 @@ sub trim {
     my $lines = shift;
     shift(@$lines) while @$lines && $lines->[0] =~ /^$/;
     pop(@$lines) while @$lines && $lines->[-1] =~ /^$/;
+}
+
+sub file {
+    my $name = shift;
+    if (@_) {
+        my $content = shift;
+        open(my $f, ">", $name) || die "Can't create '$name': $!";
+        binmode($f);
+        print $f $content;
+        close($f) || die "Can't write to '$name': $!";
+    }
+    else {
+        open(my $f, "<", $name) || return undef;
+        binmode($f);
+        local $/;
+        return scalar <$f>;
+    }
 }

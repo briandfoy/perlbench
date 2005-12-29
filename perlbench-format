@@ -82,7 +82,8 @@ sub process_tests {
 	    my($f) = split(' ', $hash{test});
 	    $f =~ s,\\,/,g if $^O eq "MSWin32";
 	    $f =~ s,^benchmarks/,,;
-	    print "    $f ", sec_f($hash{med}, $hash{med} - $hash{min}), "\n";
+	    $f =~ s,\.b$,,;
+	    printf "    %-35s %s\n", $f, sec_f($hash{med}, $hash{med} - $hash{min});
 	}
     }
     else {

@@ -1,0 +1,88 @@
+#!/usr/bin/perl
+
+use strict;
+
+BEGIN {
+    unshift(@INC, "lib") if -f "lib/PerlBench.pm";
+}
+
+use PerlBench qw(sec_f);
+use File::Find qw(find);
+
+my $res_dir = shift || "perlbench-results";
+
+my @hosts;
+opendir(my $dh, $res_dir) || die "Can't opendir $res_dir: $!";
+while (my $d = readdir($dh)) {
+    next if $d eq "." || $d eq "..";
+    next unless -d "$res_dir/$d/perls";
+    push(@hosts, $d);
+}
+closedir($dh);
+
+die "No results found" unless @hosts;
+
+@hosts = sort @hosts;
+
+for my $host (@hosts) {
+    print "Host: $host\n";
+    process_perls("$res_dir/$host/perls");
+}
+exit;
+
+sub process_perls {
+    my $dir = shift;
+    my @perls;
+    opendir(my $dh, $dir) || return;
+    while (my $d = readdir($dh)) {
+	next if $d eq "." || $d eq "..";
+	next unless -d "$dir/$d/tests";
+	push(@perls, $d);
+    }
+    closedir($dh);
+
+    for my $perl (@perls) {
+	my $ver;
+	open(my $fh, "$dir/$perl/version.txt") || die;
+	while (<$fh>) {
+	    if (/^This is perl, v(\S+)/) {
+		$ver = $1;
+		last;
+	    }
+	}
+	die unless $ver;
+	print "Perl: $ver\n";
+	process_tests("$dir/$perl/tests");
+    }
+}
+
+sub process_tests {
+    my $dir = shift;
+    my @res;
+    find(sub {
+       push(@res, $File::Find::name) if /\.pb$/;
+    }, $dir);
+    if (@res) {
+	@res = sort @res;
+	for my $res (@res) {
+	    my %hash;
+	    open(my $fh, "<", $res) || die;
+	    while (<$fh>) {
+		if (/^(\w[\w-]*)\s*:\s*(.*)/) {
+		    my($k, $v) = ($1, $2);
+		    $k = lc($k);
+		    $k =~ s/-/_/g;
+		    $hash{$k} = $v;
+		}
+		else {
+		    warn "$res: $_";
+		}
+	    }
+	    close($fh);
+	    print "    $hash{test} ", sec_f($hash{med}, $hash{med} - $hash{min}), "\n";
+	}
+    }
+    else {
+	warn "No results found in $dir";
+    }
+}

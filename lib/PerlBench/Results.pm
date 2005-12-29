@@ -30,12 +30,11 @@ sub _scan {
     # read results
     for my $f (@res) {
 	#print "$f\n";
-	my($hostname, $perls, $perl, $tests, $test) = split("/", $f, 5);
+	my($hostname, $perls, $perl, $tests) = split("/", $f);
 	die unless $perls eq "perls";
 	die unless $tests eq "tests";
-	$test =~ s,/[^/]*$,,;
 	my $res = _read_pb_file("$dir/$f");
-	push(@{$self->{h}{$hostname}{p}{$perl}{t}{$test}}, $res);
+	push(@{$self->{h}{$hostname}{p}{$perl}{t}}, $res);
     }
 
     # fill in additional information about hosts and perls

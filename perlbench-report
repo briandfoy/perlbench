@@ -22,7 +22,7 @@ if (1) {
     for my $p ($res->perls) {
 	print "$p->{name}\n";
 	print "    \@$p->{host}\n";
-	for my $t (sort {$a->{test} cmp $b->{test}} @{$p->{t}}) {
+	for my $t (sort {$b->{med} <=> $a->{med}} @{$p->{t}}) {
 	    my($name) = split(' ', $t->{test});
 	    $name =~ s,^benchmarks/,,;
 	    $name =~ s,\.b$,,;

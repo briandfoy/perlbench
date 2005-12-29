@@ -1,0 +1,17 @@
+
+This is perl, v5.8.4 built for IA64.ARCHREV_0-thread-multi
+(with 13 registered patches, see perl -V for more detail)
+
+Copyright 1987-2004, Larry Wall
+
+Binary build 810.1 provided by ActiveState Corp. http://www.ActiveState.com
+ActiveState is a division of Sophos.
+Built Feb 28 2005 01:13:00
+
+Perl may be copied only under the terms of either the Artistic License or the
+GNU General Public License, which may be found in the Perl 5 source kit.
+
+Complete documentation for Perl, including FAQ lists, should be found on
+this system using `man perl' or `perldoc perl'.  If you have access to the
+Internet, point your browser at http://www.perl.com/, the Perl Home Page.
+

@@ -57,7 +57,7 @@ if (-d $perldir) {
 	unless file("$perldir/config-summary.txt") eq $perl_V;
 }
 else {
-    mkpath($perldir, 0, 0755);
+    mkpath("$perldir/tests", 0, 0755);
     file("$perldir/path.txt", $perl);
     system(qq($perl -v >$perldir/version.txt));
     file("$perldir/config-summary.txt", $perl_V);
@@ -113,15 +113,10 @@ sub run_test {
     my $start = time2iso();
     my $res = timeit(join("", @code), %opt);
 
-    my $resdir = $test;
-    $resdir =~ s,^benchmarks/,,;
-    $resdir =~ s,\.b$,,;
-    $resdir = "$perldir/tests/$resdir";
-    mkpath($resdir, 0, 0755);
     my $resfile = $start;
     $resfile =~ s/ /T/;  # spaceless iso format
     $resfile =~ s/[-:]//g;  # compact and windows compatible
-    $resfile = "$resdir/$resfile.pb";
+    $resfile = "$perldir/tests/$resfile.pb";
     open($fh, ">", $resfile) || die "Can't create $resfile: $!";
     my $end = substr(time2iso(), 11);
 
@@ -212,9 +207,10 @@ sub get_os_version {
             "2.6.0" => "Windows Vista",
         }->{"$id.$major.$minor"} || "Windows";
 	$ver .= " ($name $string)";
+	return $ver;
     }
-    else {
-	die "NYI";
-    }
-}
 
+    my($ver) = qx(uname -sr);
+    chomp($ver);
+    return $ver;
+}

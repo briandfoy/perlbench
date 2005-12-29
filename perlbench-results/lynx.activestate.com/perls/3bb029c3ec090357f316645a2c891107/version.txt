@@ -1,0 +1,13 @@
+
+This is perl, v5.8.1-RC3 built for darwin-thread-multi-2level
+(with 1 registered patch, see perl -V for more detail)
+
+Copyright 1987-2003, Larry Wall
+
+Perl may be copied only under the terms of either the Artistic License or the
+GNU General Public License, which may be found in the Perl 5 source kit.
+
+Complete documentation for Perl, including FAQ lists, should be found on
+this system using `man perl' or `perldoc perl'.  If you have access to the
+Internet, point your browser at http://www.perl.com/, the Perl Home Page.
+

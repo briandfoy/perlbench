@@ -65,6 +65,9 @@ sub _scan {
 			$perlhash->{version} .= "-p$1";
 			$perlhash->{name} .= " patch $1";
 		    }
+		    elsif (/\bDEBUGGING\b/) {
+			$perlhash->{name} .= " (DEBUGGING)";
+		    }
 		}
 		close($fh);
 	    }

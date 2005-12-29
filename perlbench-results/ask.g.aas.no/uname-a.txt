@@ -1,1 +1,0 @@
-Linux ask.g.aas.no 2.6.14-gentoo-r4 #1 PREEMPT Thu Dec 15 23:05:40 CET 2005 i686 Intel(R) Pentium(R) 4 CPU 2.80GHz GenuineIntel GNU/Linux

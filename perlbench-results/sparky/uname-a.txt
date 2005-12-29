@@ -1,1 +1,0 @@
-SunOS sparky 5.6 Generic_105181-35 sun4u sparc SUNW,Ultra-5_10

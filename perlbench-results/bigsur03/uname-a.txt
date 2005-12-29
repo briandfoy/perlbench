@@ -1,1 +1,0 @@
-HP-UX bigsur03 B.11.22 U ia64 1800516905 unlimited-user license

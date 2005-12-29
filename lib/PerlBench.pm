@@ -61,7 +61,7 @@ sub timeit {
     print $fh "{\n    $init;\n" if $init;
     print $fh "my \@TIMEIT = (\n";
     for my $e (@experiment) {
-	print $fh make_timeit_sub_code($code, undef, $e->{loop_count}, $e->{repeat_count}), ",\n";
+	print $fh &make_timeit_sub_code($code, undef, $e->{loop_count}, $e->{repeat_count}), ",\n";
     }
     print $fh ");\n";
 

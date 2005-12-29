@@ -1,0 +1,12 @@
+System = SunOS
+Node = sparky
+Release = 5.6
+KernelID = Generic_105181-35
+Machine = sun4u
+BusType = <unknown>
+Serial = <unknown>
+Users = <unknown>
+OEM# = 0
+Origin# = 1
+NumCPU = 1
+

@@ -1,0 +1,45 @@
+Summary of my perl5 (revision 5 version 9 subversion 3 patch 24148) configuration:
+  Platform:
+    osname=linux, osvers=2.6.14-gentoo-r4, archname=i686-linux
+    uname='linux ask.g.aas.no 2.6.14-gentoo-r4 #1 preempt thu dec 15 23:05:40 cet 2005 i686 intel(r) pentium(r) 4 cpu 2.80ghz genuineintel gnulinux '
+    config_args='-Dprefix=/opt/perl/26408 -Dusedevel -Uversiononly -Doptimize=-g -ders'
+    hint=recommended, useposix=true, d_sigaction=define
+    useithreads=undef, usemultiplicity=undef
+    useperlio=define, d_sfio=undef, uselargefiles=define, usesocks=undef
+    use64bitint=undef, use64bitall=undef, uselongdouble=undef
+    usemymalloc=n, bincompat5005=undef
+  Compiler:
+    cc='cc', ccflags ='-DDEBUGGING -fno-strict-aliasing -pipe -Wdeclaration-after-statement -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64',
+    optimize='-g',
+    cppflags='-DDEBUGGING -fno-strict-aliasing -pipe -Wdeclaration-after-statement'
+    ccversion='', gccversion='3.4.4 (Gentoo 3.4.4-r1, ssp-3.4.4-1.0, pie-8.7.8)', gccosandvers=''
+    intsize=4, longsize=4, ptrsize=4, doublesize=8, byteorder=1234
+    d_longlong=define, longlongsize=8, d_longdbl=define, longdblsize=12
+    ivtype='long', ivsize=4, nvtype='double', nvsize=8, Off_t='off_t', lseeksize=8
+    alignbytes=4, prototype=define
+  Linker and Libraries:
+    ld='cc', ldflags =' -L/usr/local/lib'
+    libpth=/usr/local/lib /lib /usr/lib
+    libs=-lnsl -lndbm -lgdbm -ldb -ldl -lm -lcrypt -lutil -lc
+    perllibs=-lnsl -ldl -lm -lcrypt -lutil -lc
+    libc=/lib/libc-2.3.5.so, so=so, useshrplib=false, libperl=libperl.a
+    gnulibc_version='2.3.5'
+  Dynamic Linking:
+    dlsrc=dl_dlopen.xs, dlext=so, d_dlsymun=undef, ccdlflags='-Wl,-E'
+    cccdlflags='-fpic', lddlflags='-shared -L/usr/local/lib'
+
+
+Characteristics of this binary (from libperl): 
+  Compile-time options: DEBUGGING PERL_DONT_CREATE_GVSV PERL_MALLOC_WRAP
+                        SPRINTF_RETURNS_STRLEN USE_LARGE_FILES USE_PERLIO
+  Locally applied patches:
+	DEVEL24148
+  Built under linux
+  Compiled at Dec 19 2005 21:04:19
+  @INC:
+    /opt/perl/26408/lib/5.9.3/i686-linux
+    /opt/perl/26408/lib/5.9.3
+    /opt/perl/26408/lib/site_perl/5.9.3/i686-linux
+    /opt/perl/26408/lib/site_perl/5.9.3
+    /opt/perl/26408/lib/site_perl
+    .

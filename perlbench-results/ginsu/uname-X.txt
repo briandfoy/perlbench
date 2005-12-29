@@ -1,0 +1,12 @@
+System = SunOS
+Node = ginsu
+Release = 5.10
+KernelID = Generic
+Machine = i86pc
+BusType = <unknown>
+Serial = <unknown>
+Users = <unknown>
+OEM# = 0
+Origin# = 1
+NumCPU = 2
+

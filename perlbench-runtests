@@ -53,8 +53,9 @@ if (-d $perldir) {
 }
 else {
     mkpath($perldir, 0, 0755);
-    system("$perl -v >$perldir/version.txt");
-    system("$perl -V >$perldir/config-summary.txt");
+    system(qq($perl -v >$perldir/version.txt));
+    system(qq($perl -V >$perldir/config-summary.txt));
+    system(qq($perl -MConfig=config_sh -e "print &config_sh()" >$perldir/config.sh));
 }
 
 for my $test (@tests) {

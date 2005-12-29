@@ -134,10 +134,6 @@ sub run_test {
     print "Test-Result: $resfile\n";
 }
 
-sub print_raw_res {
-    my $res = shift;
-}
-
 sub time2iso
 {
     my $time = shift;

@@ -123,10 +123,21 @@ sub run_test {
     open($fh, ">", $resfile) || die "Can't create $resfile: $!";
     my $end = substr(time2iso(), 11);
 
+    # system info
     print $fh "Date: $start ($end)\n";
-    print $fh "Test: $test\n";
+    print $fh "PerlBench-Version: $PerlBench::VERSION\n";
+    print $fh "Test: $test md5:", md5_hex(file($test)), "\n";
     print $fh "Perl: $perl $]\n";
     print $fh "Hostname: $hostname\n";
+    if (-x "/usr/bin/uptime") {
+	my($up) = qx(/usr/bin/uptime);
+	chomp($up);
+	$up =~ s/\s+/ /g;
+	$up =~ s/^\s+//;
+	print $fh "System-Uptime: $up\n";
+    }
+
+    # test results
     print $fh "Cycles: $res->{count}\n";
     printf $fh "Loop-Overhead: %.1f%%\n", 100*$res->{loop_overhead_relative};
     print $fh "Samples: $res->{n}\n";

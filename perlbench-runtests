@@ -11,6 +11,7 @@ use Sys::Hostname qw(hostname);
 use Digest::MD5 qw(md5_hex);
 use File::Path qw(mkpath);
 use Getopt::Long qw(GetOptions);
+use File::Spec::Functions qw(file_name_is_absolute);
 
 my $resdir = "perlbench-results";
 my $hostname = hostname();
@@ -32,6 +33,8 @@ my @tests = @ARGV ? (@ARGV) : do {
 die unless @tests;
 
 $| = 1;
+
+die "Need absolute perl name" unless file_name_is_absolute($perl);
 
 print "Host: $hostname\n";
 my $hostdir = "$resdir/$hostname";

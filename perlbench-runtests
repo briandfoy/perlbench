@@ -41,6 +41,7 @@ if (-d $hostdir) {
 else {
     mkpath($hostdir, 0, 0755) || die "Can't create $hostdir: $!";
     file("$hostdir/osname.txt", "$^O\n");
+    file("$hostdir/osversion.txt", get_os_version()."\n");
     system("uname -a >$hostdir/uname-a.txt") if $^O ne "MSWin32";
     system("uname -X >$hostdir/uname-X.txt") if $^O eq "solaris";
     system("cp /proc/cpuinfo $hostdir/cpuinfo.txt") if -f "/proc/cpuinfo";
@@ -183,3 +184,37 @@ sub file {
         return scalar <$f>;
     }
 }
+
+sub get_os_version {
+    if ($^O eq "MSWin32") {
+	my($string, $major, $minor, $build, $id, $spmajor, $spminor, $suitemask, $producttype) = Win32::GetOSVersion();
+	if ($id == 0) {
+	    $major = 0;
+	    $minor = 0;
+	}
+	my $ver = "$major.$minor";
+	$ver .= ".$build" if $build;
+	if ($id >= 2 && $major >= 4) {
+	    if ($spmajor || $spminor) {
+		$ver .= " SP$spmajor.$spminor";
+	    }
+	}
+	my $name = {
+	    "0.0.0" => "Win32s",
+            "1.4.0" => "Windows 95",
+	    "1.4.10" => "Windows 98",
+            "1.4.90" => "Windows Me",
+            "2.3.51" => "Windows NT 3.51",
+	    "2.4.0" => "Windows NT 4",
+	    "2.5.0" => "Windows 2000",
+            "2.5.1" => "Windows XP",
+            "2.5.2" => "Windows Server 2003",
+            "2.6.0" => "Windows Vista",
+        }->{"$id.$major.$minor"} || "Windows";
+	$ver .= " ($name $string)";
+    }
+    else {
+	die "NYI";
+    }
+}
+

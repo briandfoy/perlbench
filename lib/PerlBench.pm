@@ -215,6 +215,7 @@ BEGIN {
 
 	my $dev = defined($d) ? 1 : "";
 	$d = $t unless $dev;
+	$d = abs($d);
 
 	if ($f != 1) {
 	    $_ *= $f for $t, $d;

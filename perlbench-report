@@ -38,10 +38,10 @@ sub cmd_list_hosts {
 }
 
 sub cmd_list_results {
-    my $host = shift;
-    for my $p ($res->perls($host)) {
+    my @hosts = @_;
+    for my $p ($res->perls(@hosts)) {
 	print "$p->{name}\n";
-	print "    \@$p->{host}\n" unless $host;
+	print "    \@$p->{host}\n" unless @hosts == 1;
 	my @t = @{$p->{t}};
 	if ($merge) {
 	    my %t;

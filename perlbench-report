@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -w
 
 use strict;
 
@@ -7,26 +7,74 @@ BEGIN {
 }
 
 use PerlBench qw(sec_f);
+use PerlBench::Stats qw(calc_stats);
 use PerlBench::Results;
 use Getopt::Long qw(GetOptions);
 
-my $res = PerlBench::Results->new;
+my $resdir = "perlbench-results";
+my $merge;
+GetOptions(
+   'result-dir=s' => \$resdir,
+   'merge' => \$merge,
+) || usage();
 
-if (0) {
+my $cmd = shift || usage();
+$cmd =~ s/-/_/g;
+$cmd = "cmd_$cmd";
+usage() unless defined &$cmd;
+
+my $res = PerlBench::Results->new($resdir);
+die "No results found in $resdir.\n" unless $res;
+
+{
+    no strict 'refs';
+    &$cmd(@ARGV);
+}
+
+sub cmd_list_hosts {
     for my $h ($res->hosts) {
 	print "$h\n";
     }
 }
 
-if (1) {
-    for my $p ($res->perls) {
+sub cmd_list_results {
+    my $host = shift;
+    for my $p ($res->perls($host)) {
 	print "$p->{name}\n";
-	print "    \@$p->{host}\n";
-	for my $t (sort {$b->{med} <=> $a->{med}} @{$p->{t}}) {
+	print "    \@$p->{host}\n" unless $host;
+	my @t = @{$p->{t}};
+	if ($merge) {
+	    my %t;
+	    for (@t) {
+		push(@{$t{$_->{test}}}, $_);
+	    }
+	    @t = ();
+	    for (values %t) {
+		if (@$_ > 1) {
+		    my %res = %{$_->[0]};
+		    for my $f (qw(min med max avg)) {
+			$res{$f} = calc_stats([map $_->{$f}, @$_])->{$f};
+		    }
+		    delete $res{loop_overhead};
+		    delete $res{std_dev};  # XXX can it be merged?
+		    push(@t, \%res);
+		}
+		else {
+		    die unless @$_;
+		    push(@t, $_->[0]);
+		}
+	    }
+	}
+	for my $t (sort {$b->{med} <=> $a->{med}} @t) {
 	    my($name) = split(' ', $t->{test});
 	    $name =~ s,^benchmarks/,,;
 	    $name =~ s,\.b$,,;
 	    printf "    %-35s %s\n", $name, sec_f($t->{med}, $t->{med} - $t->{min});
 	}
     }
+}
+
+sub usage {
+    (my $progname = $0) =~ s,.*/,,;
+    die "Usage: $progname [options] <cmd> [cmd-options]\n";
 }

@@ -4,7 +4,7 @@ use strict;
 use base 'Exporter';
 our @EXPORT_OK = qw(timeit make_timeit_sub_code sec_f);
 
-our $VERSION = "0.92";
+our $VERSION = "0.93";
 
 use PerlBench::Stats qw(calc_stats);
 use Time::HiRes qw(gettimeofday);

@@ -1,4 +1,7 @@
 benchlib.pl
+benchmarks/app/MyPodHtml.pm
+benchmarks/app/perlfunc.pod
+benchmarks/app/podhtml.b
 benchmarks/arith/mixed.t
 benchmarks/arith/trig.t
 benchmarks/array/copy.t
@@ -32,7 +35,14 @@ benchmarks/re/const.t
 benchmarks/re/w.t
 benchmarks/startup/fewmod.t
 benchmarks/startup/lotsofsub.t
+benchmarks/startup/noprog.b
 benchmarks/startup/noprog.t
+benchmarks/statement/assign-int.b
+benchmarks/statement/func-call-empty-0arg.b
+benchmarks/statement/func-call-empty-1arg.b
+benchmarks/statement/func-call-empty-2arg.b
+benchmarks/statement/func-call-empty-5arg.b
+benchmarks/statement/inc.b
 benchmarks/string/base64.t
 benchmarks/string/htmlparser.t
 benchmarks/string/index-const.t
@@ -43,11 +53,14 @@ Changes
 cpu_factor
 empty.t
 lib/PerlBench.pm
+lib/PerlBench/Results.pm
 lib/PerlBench/Stats.pm
 Makefile.PL
 MANIFEST
 overlib.js
+perlbench-report
 perlbench-run
+perlbench-runtests
 perlbench-timeit
 README
 style.css

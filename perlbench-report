@@ -26,7 +26,7 @@ if (1) {
 	    my($name) = split(' ', $t->{test});
 	    $name =~ s,^benchmarks/,,;
 	    $name =~ s,\.b$,,;
-	    printf "    %-35s %s\n", $name, sec_f($t->{med}, $t->{min} - $t->{med});
+	    printf "    %-35s %s\n", $name, sec_f($t->{med}, $t->{med} - $t->{min});
 	}
     }
 }

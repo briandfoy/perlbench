@@ -68,9 +68,12 @@ sub cmd_list_results {
 	print "    \@$p->{host}\n" unless @hosts == 1;
     CONFIG:
 	for my $ck (sort keys %{$p->{config} || {}}) {
+	    my $v = $p->{config}{$ck};
 	    for my $p2 (@perls) {
-		if ($p->{config}{$ck} ne $p2->{config}{$ck}) {
-		    print "    # $ck = $p->{config}{$ck}\n";
+		if ($v ne $p2->{config}{$ck}) {
+		    $v = remove_common_words($v, map $_->{config}{$ck}, @perls)
+			if $ck eq "ccflags" || $ck eq "optimize";
+		    print "    # $ck = $v\n";
 		    next CONFIG;
 		}
 	    }
@@ -105,6 +108,21 @@ sub cmd_list_results {
 	    printf "    %-35s %s\n", $name, sec_f($t->{med}, $t->{med} - $t->{min});
 	}
     }
+}
+
+sub remove_common_words {
+    my $w = $_[0];
+    my %w;
+    for (@_) {
+	my %w2;
+	for (split(' ')) {
+	    $w2{$_}++;
+	}
+	for (keys %w2) {
+	    $w{$_}++;
+	}
+    }
+    return join(" ", grep $w{$_} != @_, split(' ', $w));
 }
 
 sub usage {

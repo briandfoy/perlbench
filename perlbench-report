@@ -52,6 +52,7 @@ sub _filter_perl {
 	for my $v (@filter_version) {
 	    if ($perl->{version} =~ /^\Q$v\E(\.|$)/) {
 		$ok = 1;
+		last;
 	    }
 	}
 	return 0 unless $ok;

@@ -1,0 +1,12 @@
+System = SunOS
+Node = machete
+Release = 5.8
+KernelID = Generic_108528-15
+Machine = sun4u
+BusType = <unknown>
+Serial = <unknown>
+Users = <unknown>
+OEM# = 0
+Origin# = 1
+NumCPU = 1
+

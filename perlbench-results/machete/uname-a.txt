@@ -1,0 +1,1 @@
+SunOS machete 5.8 Generic_108528-15 sun4u sparc SUNW,Sun-Blade-100

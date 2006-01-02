@@ -1,0 +1,42 @@
+Summary of my perl5 (revision 5.0 version 6 subversion 1) configuration:
+  Platform:
+    osname=solaris, osvers=2.7, archname=sun4-solaris-thread-multi
+    uname='sunos sparcu10v7 5.7 generic_106541-08 sun4u sparc sunw,ultra-5_10 '
+    config_args='-ders -Dcc=gcc -Dusethreads -Duseithreads -Ud_sigsetjmp -Uinstallusrbinperl -Ulocincpth= -Uloclibpth= -Dinc_version_list=5.6.0/$archname 5.6.0 -Dprefix=/export/home/gisle/apee546-gcc7 -Dcf_by=ActiveState -Dcf_email=support@ActiveState.com'
+    hint=recommended, useposix=true, d_sigaction=define
+    usethreads=define use5005threads=undef useithreads=define usemultiplicity=define
+    useperlio=undef d_sfio=undef uselargefiles=define usesocks=undef
+    use64bitint=undef use64bitall=undef uselongdouble=undef
+  Compiler:
+    cc='gcc', ccflags ='-DUSE_REENTRANT_API -D_POSIX_PTHREAD_SEMANTICS -D_REENTRANT -fno-strict-aliasing -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64',
+    optimize='-O',
+    cppflags='-DUSE_REENTRANT_API -D_POSIX_PTHREAD_SEMANTICS -D_REENTRANT -fno-strict-aliasing'
+    ccversion='', gccversion='3.0.3', gccosandvers='solaris2.7'
+    intsize=4, longsize=4, ptrsize=4, doublesize=8, byteorder=4321
+    d_longlong=define, longlongsize=8, d_longdbl=define, longdblsize=16
+    ivtype='long', ivsize=4, nvtype='double', nvsize=8, Off_t='off_t', lseeksize=8
+    alignbytes=8, usemymalloc=n, prototype=define
+  Linker and Libraries:
+    ld='gcc', ldflags =' '
+    libpth=/usr/lib /usr/ccs/lib /usr/local/lib
+    libs=-lsocket -lnsl -ldl -lm -lrt -lpthread -lc
+    perllibs=-lsocket -lnsl -ldl -lm -lrt -lpthread -lc
+    libc=, so=so, useshrplib=false, libperl=libperl.a
+  Dynamic Linking:
+    dlsrc=dl_dlopen.xs, dlext=so, d_dlsymun=undef, ccdlflags=' -Wl,-E'
+    cccdlflags='-fPIC', lddlflags=' -W,l-E -G'
+
+
+Characteristics of this binary (from libperl): 
+  Compile-time options: MULTIPLICITY USE_ITHREADS USE_LARGE_FILES PERL_IMPLICIT_CONTEXT
+  Locally applied patches:
+  	ActivePerlEE Build 638.4 [225387]
+  Built under solaris
+  Compiled at Dec  6 2005 15:42:35
+  @INC:
+    /export/home/gisle/apee546-gcc7/lib/5.6.1/sun4-solaris-thread-multi
+    /export/home/gisle/apee546-gcc7/lib/5.6.1
+    /export/home/gisle/apee546-gcc7/lib/site_perl/5.6.1/sun4-solaris-thread-multi
+    /export/home/gisle/apee546-gcc7/lib/site_perl/5.6.1
+    /export/home/gisle/apee546-gcc7/lib/site_perl
+    .

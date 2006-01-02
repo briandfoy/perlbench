@@ -137,7 +137,7 @@ sub perls {
     for my $h (@hosts) {
 	push(@p, values %{$self->{h}{$h}{p}});
     }
-    @p = sort { _vers_cmp($a->{version}, $b->{version}) } @p;
+    @p = sort { _vers_cmp($a->{version}, $b->{version}) || ($a->{config}{osvers} cmp $b->{config}{osvers}) } @p;
     return @p;
 }
 

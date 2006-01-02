@@ -4,7 +4,13 @@ use strict;
 use File::Find ();
 
 my %SIGNIFICANT_CONFIG_KEYS = map { $_ => 1 } qw(
-    cc ccversion gccversion optimize ccflags usethreads use64bitint use64bitall usemymalloc osvers
+    cc ccversion gccversion
+    optimize ccflags
+    usethreads usemultiplicity
+    uselargefiles
+    use64bitint use64bitall uselongdouble
+    usemymalloc useshrplib
+    osvers
 );
 
 

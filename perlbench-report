@@ -15,12 +15,14 @@ my $resdir = "perlbench-results";
 my $merge;
 my $filter_activeperl;
 my $filter_gcc;
+my $filter_nogcc;
 my @filter_version;
 GetOptions(
    'result-dir=s' => \$resdir,
    'merge' => \$merge,
    'filter-activeperl' => \$filter_activeperl,
    'filter-gcc' => \$filter_gcc,
+   'filter-nogcc' => \$filter_nogcc,
    'filter-version=s' => \@filter_version,
 ) || usage();
 
@@ -39,7 +41,18 @@ die "No results found in $resdir.\n" unless $res;
 
 sub cmd_list_hosts {
     for my $h ($res->hosts) {
-	print "$h\n";
+	print $h;
+	if (my @perls = $res->perls($h)) {
+	    my $t = 0;
+	    for my $p (@perls) {
+		$t += @{$p->{t}};
+	    }
+	    my $n = @perls;
+	    printf " (%d result%s for %d perl%s)",
+		$t, ($t == 1 ? "" : "s"),
+		$n, ($n == 1 ? "" : "s");
+	}
+	print "\n";
     }
 }
 
@@ -47,6 +60,7 @@ sub _filter_perl {
     my $perl = shift;
     return 0 if $filter_activeperl && !($perl->{name} =~ /ActivePerl/);
     return 0 if $filter_gcc && !$perl->{config}{gccversion};
+    return 0 if $filter_nogcc && $perl->{config}{gccversion};
     if (@filter_version) {
 	my $ok;
 	for my $v (@filter_version) {

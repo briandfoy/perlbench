@@ -39,9 +39,19 @@ sub cmd_list_hosts {
 
 sub cmd_list_results {
     my @hosts = @_;
-    for my $p ($res->perls(@hosts)) {
+    my @perls = $res->perls(@hosts);
+    for my $p (@perls) {
 	print "$p->{name}\n";
 	print "    \@$p->{host}\n" unless @hosts == 1;
+    CONFIG:
+	for my $ck (sort keys %{$p->{config} || {}}) {
+	    for my $p2 (@perls) {
+		if ($p->{config}{$ck} ne $p2->{config}{$ck}) {
+		    print "    # $ck = $p->{config}{$ck}\n";
+		    next CONFIG;
+		}
+	    }
+	}
 	my @t = @{$p->{t}};
 	if ($merge) {
 	    my %t;

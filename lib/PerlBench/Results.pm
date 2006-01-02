@@ -3,6 +3,11 @@ package PerlBench::Results;
 use strict;
 use File::Find ();
 
+my %SIGNIFICANT_CONFIG_KEYS = map { $_ => 1 } qw(
+    cc ccversion gccversion optimize ccflags usethreads use64bitint use64bitall usemymalloc osvers
+);
+
+
 sub new {
     my $class = shift;
     my $resdir = shift || "perlbench-results";
@@ -70,6 +75,19 @@ sub _scan {
 		    }
 		}
 		close($fh);
+	    }
+
+	    if (open(my $fh, "<", "$perldir/config.sh")) {
+		while (<$fh>) {
+		    if (/^(\w+)='([^']*)'$/) {
+			my($k, $v) = ($1, $2);
+			$perlhash->{config}{$1} = $2 if $SIGNIFICANT_CONFIG_KEYS{$1};
+		    }
+		    else {
+			chomp;
+			warn "Can't parse [$_]";
+		    }
+		}
 	    }
 
 	    $perlhash->{dir} = $perldir;

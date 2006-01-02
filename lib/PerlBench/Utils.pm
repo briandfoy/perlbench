@@ -2,7 +2,7 @@ package PerlBench::Utils;
 
 use strict;
 use base 'Exporter';
-our @EXPORT_OK = qw(sec_f);
+our @EXPORT_OK = qw(sec_f num_f);
 
 my %TIME_UNITS = (
     "h" => 1/3600,
@@ -17,6 +17,29 @@ my @TIME_UNITS =
     sort { $b->[1] <=> $a->[1] }
     map  { [$_ => $TIME_UNITS{$_}] }
     keys %TIME_UNITS;
+
+sub num_f {
+    my($n, $d, $u) = @_;
+    $u = "" unless defined $u;
+
+    my $dev = defined($d) ? 1 : "";
+    $d = $n unless $dev;
+    $d = abs($d);
+
+    my $p = 0;
+    if ($d < 0.05) {
+	$p = 3;
+    }
+    elsif ($d < 0.5) {
+	$p = 2;
+    }
+    elsif ($d < 5) {
+	$p = 1;
+    }
+
+    $dev = sprintf(" ±%.*f", $p, $d) if $dev;
+    return sprintf("%.*f%s%s", $p, $n, $u, $dev);
+}
 
 sub sec_f {
     my($t, $d, $u) = @_;
@@ -36,27 +59,12 @@ sub sec_f {
 	}
     }
 
-    my $dev = defined($d) ? 1 : "";
-    $d = $t unless $dev;
-    $d = abs($d);
-
     if ($f != 1) {
-	$_ *= $f for $t, $d;
+	$t *= $f;
+	$d *= $f if defined $d;
     }
 
-    my $p = 0;
-    if ($d < 0.05) {
-	$p = 3;
-    }
-    elsif ($d < 0.5) {
-	$p = 2;
-    }
-    elsif ($d < 5) {
-	$p = 1;
-    }
-
-    $dev = sprintf(" ±%.*f", $p, $d) if $dev;
-    return sprintf("%.*f %s%s", $p, $t, $u, $dev);
+    return num_f($t, $d, " $u");
 }
 
 1;

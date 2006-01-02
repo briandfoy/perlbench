@@ -6,7 +6,7 @@ BEGIN {
     unshift(@INC, "lib") if -f "lib/PerlBench.pm";
 }
 
-use PerlBench::Utils qw(sec_f);
+use PerlBench::Utils qw(sec_f num_f);
 use PerlBench::Stats qw(calc_stats);
 use PerlBench::Results;
 use Getopt::Long qw(GetOptions);
@@ -63,23 +63,14 @@ sub _filter_perl {
 sub cmd_list_results {
     my @hosts = @_;
     my @perls = grep _filter_perl($_), $res->perls(@hosts);
-    for my $p (@perls) {
-	print "$p->{name}\n";
-	print "    \@$p->{host}\n" unless @hosts == 1;
-    CONFIG:
-	for my $ck (sort keys %{$p->{config} || {}}) {
-	    my $v = $p->{config}{$ck};
-	    for my $p2 (@perls) {
-		if ($v ne $p2->{config}{$ck}) {
-		    $v = remove_common_words($v, map $_->{config}{$ck}, @perls)
-			if $ck eq "ccflags" || $ck eq "optimize";
-		    print "    # $ck = $v\n";
-		    next CONFIG;
-		}
-	    }
-	}
-	my @t = @{$p->{t}};
-	if ($merge) {
+    unless (@perls) {
+	print "No results to report!\n";
+	return;
+    }
+
+    if ($merge) {
+	for my $p (@perls) {
+	    my @t = @{$p->{t}};
 	    my %t;
 	    for (@t) {
 		push(@{$t{$_->{test}}}, $_);
@@ -100,12 +91,60 @@ sub cmd_list_results {
 		    push(@t, $_->[0]);
 		}
 	    }
+	    $p->{t} = \@t;
 	}
-	for my $t (sort {$b->{med} <=> $a->{med}} @t) {
+    }
+
+    my %minmed;
+    my %minmed_min;
+    for my $p (@perls) {
+	for my $t (@{$p->{t}}) {
+	    my $name = $t->{test};
+	    if (!defined($minmed{$name}) || $minmed{$name} > $t->{med}) {
+		$minmed{$name} = $t->{med};
+		$minmed_min{$name} = $t->{min};
+	    }
+	}
+    }
+
+    for my $p (@perls) {
+	print "$p->{name}\n";
+	print "    \@$p->{host}\n" unless @hosts == 1;
+    CONFIG:
+	for my $ck (sort keys %{$p->{config} || {}}) {
+	    my $v = $p->{config}{$ck};
+	    for my $p2 (@perls) {
+		if ($v ne $p2->{config}{$ck}) {
+		    $v = remove_common_words($v, map $_->{config}{$ck}, @perls)
+			if $ck eq "ccflags" || $ck eq "optimize";
+		    print "    # $ck = $v\n";
+		    next CONFIG;
+		}
+	    }
+	}
+	for my $t (sort {$b->{med} <=> $a->{med}} @{$p->{t}}) {
 	    my($name) = split(' ', $t->{test});
 	    $name =~ s,^benchmarks/,,;
 	    $name =~ s,\.b$,,;
-	    printf "    %-35s %s\n", $name, sec_f($t->{med}, $t->{med} - $t->{min});
+
+	    printf "    %-35s %-18s ", $name,
+		sec_f($t->{med}, $t->{med} - $t->{min});
+
+	    my $minmed = $minmed{$t->{test}};
+	    my $minmed_min = $minmed_min{$t->{test}};
+	    if ($minmed == $t->{med} && $minmed_min == $t->{min}) {
+		print "-";
+	    }
+	    else {
+		my $minmed_max = $minmed + ($minmed - $minmed_min);
+
+		my $p_max = ($t->{med} + ($t->{med} - $t->{min}) - $minmed_min) / $minmed_min;
+		my $p_min = ($t->{min} - $minmed_max) / $minmed_max;
+		my $p_avg = ($p_max + $p_min) / 2;
+
+		print num_f($p_avg * 100, ($p_avg - $p_min) * 100, "%");
+	    }
+	    print "\n";
 	}
     }
 }

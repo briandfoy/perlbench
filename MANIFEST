@@ -55,6 +55,7 @@ empty.t
 lib/PerlBench.pm
 lib/PerlBench/Results.pm
 lib/PerlBench/Stats.pm
+lib/PerlBench/Utils.pm
 Makefile.PL
 MANIFEST
 overlib.js

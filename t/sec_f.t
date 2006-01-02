@@ -5,7 +5,7 @@ use Test qw(plan ok);
 
 plan tests => 20;
 
-use PerlBench qw(sec_f);
+use PerlBench::Utils qw(sec_f);
 
 ok(sec_f(60*60), "1.0 h");
 ok(sec_f(60), "1.0 min");

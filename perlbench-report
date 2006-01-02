@@ -6,7 +6,7 @@ BEGIN {
     unshift(@INC, "lib") if -f "lib/PerlBench.pm";
 }
 
-use PerlBench qw(sec_f);
+use PerlBench::Utils qw(sec_f);
 use PerlBench::Stats qw(calc_stats);
 use PerlBench::Results;
 use Getopt::Long qw(GetOptions);

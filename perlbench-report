@@ -15,11 +15,13 @@ my $resdir = "perlbench-results";
 my $merge;
 my $filter_activeperl;
 my $filter_gcc;
+my @filter_version;
 GetOptions(
    'result-dir=s' => \$resdir,
    'merge' => \$merge,
    'filter-activeperl' => \$filter_activeperl,
    'filter-gcc' => \$filter_gcc,
+   'filter-version=s' => \@filter_version,
 ) || usage();
 
 my $cmd = shift || usage();
@@ -45,6 +47,15 @@ sub _filter_perl {
     my $perl = shift;
     return 0 if $filter_activeperl && !($perl->{name} =~ /ActivePerl/);
     return 0 if $filter_gcc && !$perl->{config}{gccversion};
+    if (@filter_version) {
+	my $ok;
+	for my $v (@filter_version) {
+	    if ($perl->{version} =~ /^\Q$v\E(\.|$)/) {
+		$ok = 1;
+	    }
+	}
+	return 0 unless $ok;
+    }
     return 1;
 }
 

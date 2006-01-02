@@ -13,9 +13,13 @@ use Getopt::Long qw(GetOptions);
 
 my $resdir = "perlbench-results";
 my $merge;
+my $filter_activeperl;
+my $filter_gcc;
 GetOptions(
    'result-dir=s' => \$resdir,
    'merge' => \$merge,
+   'filter-activeperl' => \$filter_activeperl,
+   'filter-gcc' => \$filter_gcc,
 ) || usage();
 
 my $cmd = shift || usage();
@@ -37,9 +41,16 @@ sub cmd_list_hosts {
     }
 }
 
+sub _filter_perl {
+    my $perl = shift;
+    return 0 if $filter_activeperl && !($perl->{name} =~ /ActivePerl/);
+    return 0 if $filter_gcc && !$perl->{config}{gccversion};
+    return 1;
+}
+
 sub cmd_list_results {
     my @hosts = @_;
-    my @perls = $res->perls(@hosts);
+    my @perls = grep _filter_perl($_), $res->perls(@hosts);
     for my $p (@perls) {
 	print "$p->{name}\n";
 	print "    \@$p->{host}\n" unless @hosts == 1;

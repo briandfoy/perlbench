@@ -18,6 +18,8 @@ my $filter_gcc;
 my $filter_nogcc;
 my $filter_static;
 my @filter_version;
+my $show_dir;
+my $show_path;
 GetOptions(
    'result-dir=s' => \$resdir,
    'merge' => \$merge,
@@ -26,6 +28,8 @@ GetOptions(
    'filter-nogcc' => \$filter_nogcc,
    'filter-static' => \$filter_static,
    'filter-version=s' => \@filter_version,
+   'show-dir' => \$show_dir,
+   'show-path' => \$show_path,
 ) || usage();
 
 my $cmd = shift || usage();
@@ -127,6 +131,8 @@ sub cmd_list_results {
     for my $p (@perls) {
 	print "$p->{name}\n";
 	print "    \@$p->{host}\n" unless @hosts == 1;
+        print "    # resdir = $p->{dir}\n" if $show_dir;
+        print "    # path = $p->{path}\n" if $show_path;
     CONFIG:
 	for my $ck (sort keys %{$p->{config} || {}}) {
 	    my $v = $p->{config}{$ck};

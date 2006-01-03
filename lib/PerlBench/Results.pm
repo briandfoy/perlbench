@@ -96,6 +96,13 @@ sub _scan {
 		}
 	    }
 
+	    if (open(my $fh, "<", "$perldir/path.txt")) {
+		if (defined(my $path = <$fh>)) {
+		    chomp($path);
+		    $perlhash->{path} = $path;
+		}
+	    }
+
 	    $perlhash->{dir} = $perldir;
 	    $perlhash->{host} = $hostname;
 	}

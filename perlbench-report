@@ -16,6 +16,7 @@ my $merge;
 my $filter_activeperl;
 my $filter_gcc;
 my $filter_nogcc;
+my $filter_static;
 my @filter_version;
 GetOptions(
    'result-dir=s' => \$resdir,
@@ -23,6 +24,7 @@ GetOptions(
    'filter-activeperl' => \$filter_activeperl,
    'filter-gcc' => \$filter_gcc,
    'filter-nogcc' => \$filter_nogcc,
+   'filter-static' => \$filter_static,
    'filter-version=s' => \@filter_version,
 ) || usage();
 
@@ -61,6 +63,7 @@ sub _filter_perl {
     return 0 if $filter_activeperl && !($perl->{name} =~ /ActivePerl/);
     return 0 if $filter_gcc && !$perl->{config}{gccversion};
     return 0 if $filter_nogcc && $perl->{config}{gccversion};
+    return 0 if $filter_static && $perl->{config}{useshrplib} eq "true";
     if (@filter_version) {
 	my $ok;
 	for my $v (@filter_version) {

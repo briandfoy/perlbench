@@ -18,6 +18,7 @@ my $filter_gcc;
 my $filter_nogcc;
 my $filter_static;
 my @filter_version;
+my @filter_dir;
 my $show_dir;
 my $show_path;
 GetOptions(
@@ -28,6 +29,7 @@ GetOptions(
    'filter-nogcc' => \$filter_nogcc,
    'filter-static' => \$filter_static,
    'filter-version=s' => \@filter_version,
+   'filter-dir=s' => \@filter_dir,
    'show-dir' => \$show_dir,
    'show-path' => \$show_path,
 ) || usage();
@@ -69,14 +71,10 @@ sub _filter_perl {
     return 0 if $filter_nogcc && $perl->{config}{gccversion};
     return 0 if $filter_static && $perl->{config}{useshrplib} eq "true";
     if (@filter_version) {
-	my $ok;
-	for my $v (@filter_version) {
-	    if ($perl->{version} =~ /^\Q$v\E(\.|$)/) {
-		$ok = 1;
-		last;
-	    }
-	}
-	return 0 unless $ok;
+	return 0 unless grep $perl->{version} =~ /^\Q$_\E(\.|$)/, @filter_version;
+    }
+    if (@filter_dir) {
+	return 0 unless grep $perl->{dir} eq $_, @filter_dir;
     }
     return 1;
 }

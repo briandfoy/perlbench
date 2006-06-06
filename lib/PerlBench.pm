@@ -2,7 +2,7 @@ package PerlBench;
 
 use strict;
 use base 'Exporter';
-our @EXPORT_OK = qw(timeit make_timeit_sub_code);
+our @EXPORT_OK = qw(timeit timeit_once make_timeit_sub make_timeit_sub_code);
 
 our $VERSION = "0.93";
 

@@ -10,12 +10,14 @@ accuracy(10000000);
 sub accuracy {
     my $count = shift;
     my @m;
+    my $sub = make_timeit_sub('', '', 1, 1);
+    $sub->(100);  # cache warmup
     for my $f (1, 1, 1.015, 1.020, 1.025) {
 	my $n = int($f * $count + 0.5);
-	my $sub = make_timeit_sub('', '', $n, 1);
 	my @t;
-	for (1..11) {
-	    push(@t, $sub->());
+	for (1..31) {
+	    push(@t, $sub->($n));
+	    print "$n,$t[-1]\n";
 	}
 	my $h = calc_stats(\@t);
 	push(@m, $h->{min});

@@ -165,7 +165,7 @@ sub make_timeit_sub_code {
     $init = "" unless defined $init;
     return <<EOT1 . "$init;$code" . <<'EOT2' . ($code x $repeat_count) . <<'EOT3';
 sub {
-    my \$COUNT = $loop_count;
+    my \$COUNT = shift || $loop_count;
     \$COUNT++;
     package main;
 EOT1

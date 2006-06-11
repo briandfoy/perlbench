@@ -17,7 +17,7 @@ sub timeit {
     my $init = $opt{init};
 
     # XXX auto determine how long we need to time stuff
-    my $enough = $opt{enough} || 0.5;
+    my $enough = $opt{enough} || 1;
 
     # auto determine $loop_count and $repeat_count
     print STDERR "# Determine loop count - enough is " . sec_f($enough) . "\n"

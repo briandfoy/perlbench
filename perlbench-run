@@ -7,8 +7,8 @@ use strict;
 $| = 1;
 
 use Getopt::Std;
-use vars qw($opt_c $opt_t $opt_d $opt_s);
-getopts("c:t:d:s") or usage();
+use vars qw($opt_c $opt_t $opt_d $opt_s $opt_v);
+getopts("c:t:d:sv") or usage();
 
 use Sys::Hostname qw(hostname);
 use File::Basename qw(dirname);
@@ -74,6 +74,7 @@ my %config_summary;
 	my $label = $p->{label};
 	print "$label) $p->{name}\n";
 	printf "\t%-*s = %s\n", $keymax, "version", $p->{version};
+	printf "\t%-*s = %s\n", $keymax, "git-version", $p->{git_version} if $p->{git_version};
 	printf "\t%-*s = %s\n", $keymax, "path", $p->{path};
 	for my $k (sort keys %{$p->{config} || {}}) {
 	    next if $cnf{$k}{$p->{config}{$k}} == @perls;
@@ -323,12 +324,14 @@ sub usage
     $0 =~ s,.*/,,;
     die "Usage: $0 [options] [lab1=]<perl1> [lab2=]<perl2>...
 
+  if an arg is a directory, 'perl' is appended to it
 Recognized options:
   -s               don't scale numbers (so that first perl is always 100)
   -t <filter>      only tests that match <filter> regex are timed
   -c <cpu-factor>  use this factor to scale tests instead of running the
                    'cpu_factor' program to determine it.
   -d <dirname>     where to save results
+  -v               verbose - a bit of debug
 ";
 }
 
@@ -405,6 +408,11 @@ sub new
 	die "$path is not executable";
 	next;
     }
+    if (-d $path and -x "$path/perl") {
+	$path = "$path/perl";
+	print "updating given dir path to $path\n" if $::opt_v;
+    }
+
     my $self = bless { path => $path, label => $label }, $class;
     $self->run_cmd(*V, '-e', 'print qq(This is perl ), $]+0, qq(\n)');
     my $version = <V>;
@@ -416,8 +424,13 @@ sub new
     $self->{version} = $1;
     $self->run_cmd(*V, '-v');
     while (<V>) {
-	if (/^This is perl, v(\S+)/) {
+	if (/^This is perl, v(\S+)/) {	# old format
 	    $self->{name} = "perl-$1";
+	}
+	if (/^This is perl (\d), version (\d+), subversion (\d+) \((\S+) (?:\((\S+)\){2})?/) {
+	    print "new format: $4 $5\n" if $::opt_v;
+	    $self->{name} = "perl-$1";
+	    $self->{git_version} = $5
 	}
 	if (/^Binary build (\d+.*) provided by ActiveState/) {
 	    $self->{name} .= " build $1";

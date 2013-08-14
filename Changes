@@ -4,7 +4,7 @@
 
    brian d foy is now a comaintainer
    
-   Hide MyHTML::Pod from PAUSE
+   Hide MyPodHtml from PAUSE
    
    (d4033ad3f01f7f8ceaffbef76a954b88f8917868)
    Jim Chromie applied the patch for RT #73642 to recognize the

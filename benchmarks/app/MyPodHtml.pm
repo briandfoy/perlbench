@@ -1,6 +1,7 @@
 # This is a snapshot of Pod::Html used for benchmarking purposes.
 
-package MyPodHtml;
+package # hide from PAUSE
+	MyPodHtml;
 use strict;
 require Exporter;
 

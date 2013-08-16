@@ -28,7 +28,7 @@ WriteMakefile (
 			},
 		no_index => {
 			dir       => [ qw(benchmarks perlbench-results t) ],
-			directory => [ qw(benchmarks perlbench-results t) ]
+			directory => [ qw(benchmarks perlbench-results t) ],
 			namespace => 'Pod::HTML',
 			}
 		},

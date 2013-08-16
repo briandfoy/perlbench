@@ -2,9 +2,9 @@ use ExtUtils::MakeMaker 6.46;
 
 WriteMakefile (
 	NAME          => 'perlbench',
-	ABSTRACT_FROM => 'lib/PerlBench.pm',
+	ABSTRACT      => 'Time different perls for certain tasks',
 #	VERSION_FROM  => 'lib/PerlBench.pm',
-	VERSION       => '0.94_01',
+	VERSION       => '0.94_02',
 	EXE_FILES     => [
 		qw(
 			perlbench-timeit 
@@ -29,7 +29,7 @@ WriteMakefile (
 		no_index => {
 			dir       => [ qw(benchmarks perlbench-results t) ],
 			directory => [ qw(benchmarks perlbench-results t) ],
-			namespace => 'Pod::HTML',
+			'package' => 'Pod::HTML',
 			}
 		},
 	);

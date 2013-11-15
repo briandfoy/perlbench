@@ -1,2 +1,12 @@
 ^perlbench-results/
 ^blib/
+\.git/
+^perlbench-.*
+pm_to_blib
+\.travis\.yml
+MYMETA.*
+\.bak$
+Makefile$
+\.DS_Store
+\.gitignore
+\.releaserc

@@ -3,8 +3,7 @@ use ExtUtils::MakeMaker 6.46;
 WriteMakefile (
 	NAME          => 'perlbench',
 	ABSTRACT      => 'Time different perls for certain tasks',
-#	VERSION_FROM  => 'lib/PerlBench.pm',
-	VERSION       => '0.94_03',
+	VERSION_FROM  => 'lib/PerlBench.pm',
 	EXE_FILES     => [
 		qw(
 			perlbench-timeit 

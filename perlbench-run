@@ -391,6 +391,7 @@ sub time2iso
 
 BEGIN {
 package Perl;
+use constant OS => $^O;
 
 my $NEXT_LABEL = "A";
 
@@ -475,7 +476,7 @@ sub run_cmd
     my $self = shift;
     my @cmd = $self->cmd;
     my $fh = shift;
-    my @args = map {/\s/ ? "'$_'" : $_} @_;
+    my @args = map {/\s/ ? OS ne 'MSWin32' ? "'$_'" : "\"$_\"" : $_} @_;
     open($fh, "@cmd @args |") or die "Cannot pipe from '@cmd @args': $!";
 }
 

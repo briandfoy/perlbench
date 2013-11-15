@@ -4,6 +4,8 @@ use strict;
 
 use base 'Exporter';
 our @EXPORT_OK = qw(calc_stats);
+our $VERSION = "0.95_03";
+
 
 sub calc_stats {
     my($samples, $hash) = @_;

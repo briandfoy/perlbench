@@ -4,7 +4,7 @@ WriteMakefile (
 	NAME          => 'perlbench',
 	ABSTRACT      => 'Time different perls for certain tasks',
 #	VERSION_FROM  => 'lib/PerlBench.pm',
-	VERSION       => '0.94_02',
+	VERSION       => '0.94_03',
 	EXE_FILES     => [
 		qw(
 			perlbench-timeit 

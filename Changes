@@ -1,5 +1,8 @@
 # Changes for perlbench
 
+0.96 - Sat Jan  4 23:32:17 2014
+	* Update Makefile.PL with meta info and no_index info
+
 2013-08-14   brian d foy <brian.d.foy@gmail.com>
 
 0.96 - Sat Jan  4 23:27:51 2014

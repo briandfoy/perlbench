@@ -66,11 +66,6 @@ perlbench-run
 perlbench-runtests
 perlbench-timeit
 README
-res-5.csv
-res-6.csv
-res-7.csv
-res-8.csv
-res-9.csv
 res-run.pl
 res-summary.pl
 style.css

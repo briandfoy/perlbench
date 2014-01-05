@@ -1,5 +1,8 @@
 2013-08-14   brian d foy <brian.d.foy@gmail.com>
 
+0.96 - Sat Jan  4 23:27:51 2014
+	* Update Makefile.PL with meta info and no_index info
+
    Release 0.94
 
    brian d foy is now a comaintainer

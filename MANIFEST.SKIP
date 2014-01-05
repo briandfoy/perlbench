@@ -59,6 +59,7 @@
 
 
 ^perlbench-results/
-^perlbench-.*
+^perlbench-\d.*
+
 \.travis\.yml
 \.releaserc

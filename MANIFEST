@@ -60,6 +60,11 @@ Makefile.PL
 MANIFEST
 MANIFEST.SKIP
 overlib.js
+perlbench-enough
+perlbench-report
+perlbench-run
+perlbench-runtests
+perlbench-timeit
 README
 res-5.csv
 res-6.csv

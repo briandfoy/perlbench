@@ -11,15 +11,15 @@
    Release 0.94
 
    brian d foy is now a comaintainer
-   
+
    Hide MyPodHtml from PAUSE
-   
+
    (d4033ad3f01f7f8ceaffbef76a954b88f8917868)
    Jim Chromie applied the patch for RT #73642 to recognize the
    new perl version banner
-   
+
    Add -v flag for verbose output
-   
+
    Allow perlbench args to be directories
 
 2005-12-30   Gisle Aas <gisle@ActiveState.com>
@@ -28,7 +28,7 @@
 
    Added script 'perlbench-runtests' which runs new style *.b
    tests.
-   
+
    Added stub script 'perlbench-report' which will grow into
    something that nicely formats the 'perlbench-runtests' results.
 

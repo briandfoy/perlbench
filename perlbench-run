@@ -1,7 +1,5 @@
 #!/usr/bin/perl -w
 
-# $Id: perlbench-run,v 1.28 2005/12/19 15:19:09 gisle Exp $
-
 require 5.002;
 use strict;
 $| = 1;

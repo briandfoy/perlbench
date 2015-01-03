@@ -303,8 +303,6 @@ exit;
 #-------------------------------------------------------copy---------
 package HTML::Parser;
 
-# $Id: htmlparser.t,v 1.3 1998/01/07 09:42:23 aas Exp $
-
 use strict;
 #use HTML::Entities ();
 

@@ -1,10 +1,11 @@
+require 5.008;
 use strict;
 use warnings;
 
 my $github    = 'https://github.com/briandfoy/perlbench';
 my $main_file = 'lib/PerlBench.pm';
 
-WriteMakefile (
+my %WriteMakefile = (
 	'NAME'          => 'perlbench',
 	'ABSTRACT_FROM' => $main_file,
 	'VERSION_FROM'  => $main_file,

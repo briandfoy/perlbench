@@ -2,14 +2,16 @@ require 5.008;
 use strict;
 use warnings;
 
+use File::Spec::Functions qw(catfile);
+
+my $module    = 'PerlBench';
 my $github    = 'https://github.com/briandfoy/perlbench';
-my $main_file = 'lib/PerlBench.pm';
+my $main_file = catfile( 'lib', split /::/, "$module.pm" );
 
 my %WriteMakefile = (
-	'NAME'          => 'perlbench',
+	'NAME'          => $module,
 	'ABSTRACT_FROM' => $main_file,
 	'VERSION_FROM'  => $main_file,
-	'VERSION_FROM'  => 'lib/PerlBench.pm',
 	'EXE_FILES'     => [
 		qw(
 			perlbench-timeit 

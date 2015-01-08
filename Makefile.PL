@@ -14,6 +14,9 @@ my %WriteMakefile = (
 	'NAME'          => $module,
 	'ABSTRACT_FROM' => $main_file,
 	'VERSION_FROM'  => $main_file,
+	'LICENSE'       => 'perl',
+	'AUTHOR'        => 'Gisle Aas <gisle@cpan.org',
+
 	'EXE_FILES'     => [
 		qw(
 			perlbench-timeit 

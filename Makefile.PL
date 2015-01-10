@@ -63,6 +63,8 @@ my %WriteMakefile = (
 			'package' => 'Pod::HTML',
 			}
 		},
+
+	clean => { FILES => "$dist-*" },
 	);
 
 sub arguments { \%WriteMakefile }

@@ -11,6 +11,13 @@ use PerlBench::Utils qw(sec_f);
 use Time::HiRes qw(gettimeofday);
 use Carp qw(croak);
 
+=encoding utf8
+
+=head1 NAME
+
+PerlBench - compare several perls's performance
+
+=cut
 
 sub timeit {
     my($code, %opt) = @_;

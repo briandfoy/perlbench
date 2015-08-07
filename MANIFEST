@@ -52,6 +52,7 @@ benchmarks/string/tr.t
 Changes
 cpu_factor
 empty.t
+INSTALL.SKIP
 lib/PerlBench.pm
 lib/PerlBench/Results.pm
 lib/PerlBench/Stats.pm

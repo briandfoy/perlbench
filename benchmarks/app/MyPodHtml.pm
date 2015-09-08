@@ -20,6 +20,8 @@ use Getopt::Long;
 
 use locale;	# make \w work right in non-ASCII lands
 
+=encoding utf8
+
 =head1 NAME
 
 Pod::Html - module to convert pod files to HTML

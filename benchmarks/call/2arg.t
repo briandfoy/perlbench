@@ -10,13 +10,14 @@ require 'benchlib.pl';
 
 sub foo
 {
-    $_[0] * $_[1];
+    my ($a, $b) = @_;
+    $a * $b;
 }
 
-&runtest(25, <<'ENDTEST');
+&runtest(10, <<'ENDTEST');
 
-   &foo(3, 4);
-   &foo(5, 6);
-   &foo(8, 9);
+   foo(3, 4);
+   foo(5, 6);
+   foo(8, 9);
 
 ENDTEST

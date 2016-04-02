@@ -8,7 +8,7 @@
 
 require 'benchlib.pl';
 
-&runtest(0.05, <<'ENDTEST');
+&runtest(0.0035, <<'ENDTEST');
 
     system $^X, "-e", "1";
 

@@ -22,16 +22,16 @@ my @filter_dir;
 my $show_dir;
 my $show_path;
 GetOptions(
-   'result-dir=s' => \$resdir,
-   'merge' => \$merge,
-   'filter-activeperl' => \$filter_activeperl,
-   'filter-gcc' => \$filter_gcc,
-   'filter-nogcc' => \$filter_nogcc,
-   'filter-static' => \$filter_static,
-   'filter-version=s' => \@filter_version,
-   'filter-dir=s' => \@filter_dir,
-   'show-dir' => \$show_dir,
-   'show-path' => \$show_path,
+   'result-dir=s' 	=> \$resdir,
+   'merge' 		=> \$merge,
+   'filter-activeperl' 	=> \$filter_activeperl,
+   'filter-gcc' 	=> \$filter_gcc,
+   'filter-nogcc' 	=> \$filter_nogcc,
+   'filter-static' 	=> \$filter_static,
+   'filter-version=s' 	=> \@filter_version,
+   'filter-dir=s' 	=> \@filter_dir,
+   'show-dir' 		=> \$show_dir,
+   'show-path' 		=> \$show_path,
 ) || usage();
 
 my $cmd = shift || usage();

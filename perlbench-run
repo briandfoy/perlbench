@@ -94,7 +94,7 @@ my %config_summary;
 
 my $factor = $opt_c;
 unless ($factor) {
-    $factor = `$^X cpu_factor`;
+    $factor = -e 'cpu_factor' ? `$^X cpu_factor` : `$^X -S cpu_factor`;
     chomp($factor);
     die "Can't calculate cpu speed factor" unless $factor;
 }

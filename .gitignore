@@ -26,4 +26,5 @@ cover_db/
 inc/
 nytprof.out
 perlbench-*
+/benchres-*
 *.bak

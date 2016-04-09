@@ -13,7 +13,7 @@ if (!$cpu_factor) {
 }
 $empty_cycles_per_sec = shift;
 
-sub main'runtest
+sub main::runtest
 {
     local($scale, $code) = @_;
     print "Date: " . &time2iso() . "\n";

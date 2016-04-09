@@ -55,7 +55,7 @@ close(FILE);
 
 require 'benchlib.pl';
 
-&runtest(0.0003, <<'ENDTEST');
+&runtest(0.00015, <<'ENDTEST');
 
     # print "$^X $file\n";
     system $^X, $file;

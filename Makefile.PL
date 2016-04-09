@@ -55,6 +55,7 @@ my %WriteMakefile = (
 			perlbench-run
 			perlbench-runtests
 			perlbench-report
+			cpu_factor
 		  )
 		],
 

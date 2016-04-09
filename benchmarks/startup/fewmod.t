@@ -8,7 +8,7 @@
 
 require 'benchlib.pl';
 
-&runtest(0.0015, <<'ENDTEST');
+&runtest(0.0005, <<'ENDTEST');
 
     my $path = $^X;
     (my $pdir = $path) =~ s,[/\\][^/\\]+$,/,;

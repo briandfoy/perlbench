@@ -9,7 +9,7 @@ use vars qw($opt_c $opt_t $opt_d $opt_s $opt_v);
 getopts("c:t:d:sv") or usage();
 
 use Sys::Hostname qw(hostname);
-use File::Basename qw(dirname);
+use File::Basename qw(basename dirname);
 use File::Path qw(mkpath);
 use Cwd qw(abs_path);
 
@@ -69,8 +69,9 @@ my %config_summary;
     }
 
     for my $p (@perls) {
-	my $label = $p->{label};
-	print "$label) $p->{name}\n";
+	my $label = $p->{label} || '';
+	my $name = $p->{name} || basename($p->{path});
+	print "$label) $name\n";
 	printf "\t%-*s = %s\n", $keymax, "version", $p->{version};
 	printf "\t%-*s = %s\n", $keymax, "git-version", $p->{git_version} if $p->{git_version};
 	printf "\t%-*s = %s\n", $keymax, "path", $p->{path};
@@ -93,7 +94,7 @@ my %config_summary;
 
 my $factor = $opt_c;
 unless ($factor) {
-    $factor = `$^X cpu_factor`;
+    $factor = -e 'cpu_factor' ? `$^X cpu_factor` : `$^X -S cpu_factor`;
     chomp($factor);
     die "Can't calculate cpu speed factor" unless $factor;
 }
@@ -259,8 +260,15 @@ printf "%-20s", "AVERAGE";
 for my $p (@perls) {
     printf "%8.0f", $p->{point_sum} / $p->{no_tests};
 }
+print INDEX " <tr>\n";
+print INDEX "  <th align=left>Average</th>\n";
+for my $p (@perls) {
+    printf INDEX qq(  <td align=right>%.0f</td>\n), $p->{point_sum} / $p->{no_tests};
+}
+print INDEX " </tr>\n";
+
 print INDEX "</table>\n";
-print INDEX "<p><small>Higer numbers are better. 200 is twice as fast as 100.</small></p>\n";
+print INDEX "<p><small>Higher numbers are better. 200 is twice as fast as 100.</small></p>\n";
 
 print INDEX "<h2>Configuration summary</h2>\n";
 print INDEX "<p>Test ran on a $^O machine";
@@ -372,7 +380,7 @@ sub link_or_copy {
     }
 }
 sub htmlesc {
-    my $str = shift;
+    my $str = shift || '';
     $str =~ s/&/&amp;/g;
     $str =~ s/</&lt;/g;
     $str;

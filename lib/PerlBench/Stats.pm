@@ -4,7 +4,7 @@ use strict;
 
 use base 'Exporter';
 our @EXPORT_OK = qw(calc_stats);
-our $VERSION = "0.96";
+our $VERSION = "1.001";
 
 
 sub calc_stats {

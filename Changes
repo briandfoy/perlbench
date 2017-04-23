@@ -1,5 +1,8 @@
 Revision history for Perl module perlbench
 
+1.001 2017-04-23T13:53:06Z
+	* Freshening the distro
+
 1.001 2016-04-09T18:24:43Z
 	* Reini Urban cleaned up a few minor things and adjusted some
 	time windows for Perl 5.22. 

@@ -17,6 +17,11 @@ use Carp qw(croak);
 
 PerlBench - compare several perls's performance
 
+=head1 DESCRIPTION
+
+This module contains timing functions for the various scripts in the
+distribution.
+
 =cut
 
 sub timeit {

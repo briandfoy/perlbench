@@ -8,9 +8,9 @@
 
 =for HTML <a href='https://coveralls.io/github/briandfoy/perlbench?branch=master'><img src='https://coveralls.io/repos/github/briandfoy/perlbench/badge.svg?branch=master' alt='Coverage Status' /></a>
 
-=for HTML <a href="https://github.com/briandfoy/perlbench/blob/master/LICENSE"><img src="https://img.shields.io/cpan/l/perlbench.svg" /></a>
+=for HTML <a href="https://github.com/briandfoy/perlbench/blob/master/LICENSE"><img src="https://img.shields.io/cpan/l/PerlBench.svg" /></a>
 
-=for HTML <a href="http://www.metacpan.org/module/perlbench"><img src="https://img.shields.io/cpan/v/perlbench.svg" /></A>
+=for HTML <a href="http://www.metacpan.org/module/PerlBench"><img src="https://img.shields.io/cpan/v/PerlBench.svg" /></A>
 
 =head1 The PerlBench module
 

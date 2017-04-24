@@ -62,4 +62,6 @@
 ^perlbench-\d.*
 
 \.travis\.yml
+\.?appveyor.yml
 \.releaserc
+\.lwpcookies

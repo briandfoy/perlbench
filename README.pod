@@ -10,7 +10,7 @@
 
 =for HTML <a href="https://github.com/briandfoy/perlbench/blob/master/LICENSE"><img src="https://img.shields.io/cpan/l/PerlBench.svg" /></a>
 
-=for HTML <a href="http://www.metacpan.org/module/PerlBench"><img src="https://img.shields.io/cpan/v/PerlBench.svg" /></A>
+=for HTML <a href="https://metacpan.org/pod/PerlBench"><img src="https://img.shields.io/cpan/v/PerlBench.svg" /></A>
 
 =head1 The PerlBench module
 
@@ -23,7 +23,7 @@ for any Perl module.
 
 To read about L<PerlBench>, look at the embedded documentation
 in the module itself. Inside the distribution, you can format it
-with L<perldoc|http://perldoc.perl.org/perldoc.html>:
+with L<perldoc|https://perldoc.perl.orgperldoc.html>:
 
 	% perldoc lib/PerlBench.pm
 
@@ -33,7 +33,7 @@ name instead of the file location:
 	% perldoc PerlBench
 
 You can read the documentation and inspect the meta data at
-L<MetaCPAN|http://www.metacpan.org/module/PerlBench>.
+L<MetaCPAN|https://metacpan.org/pod/PerlBench>.
 
 The standard module documentation has example uses in the SYNOPSIS
 section, but you can also look in the I<examples/> directory (if it's

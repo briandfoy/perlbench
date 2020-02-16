@@ -21,9 +21,9 @@ for any Perl module.
 
 =head2 Documentation
 
-The documentation is a bit scant. Look at the various programs in
-the top-level of this distribution to see what they do (and maybe
-help to fill out the docs a bit).
+The documentation is a bit scant. Look at the various F<perlbench-*>
+programs in the top-level of this distribution to see what they do
+(and maybe help to fill out the docs a bit).
 
 =head2 Installation
 

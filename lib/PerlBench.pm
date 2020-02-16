@@ -4,7 +4,7 @@ use strict;
 use base 'Exporter';
 our @EXPORT_OK = qw(timeit timeit_once make_timeit_sub make_timeit_sub_code);
 
-our $VERSION = "1.001";
+our $VERSION = "1.002";
 
 use PerlBench::Stats qw(calc_stats);
 use PerlBench::Utils qw(sec_f);
@@ -21,6 +21,9 @@ PerlBench - compare several perls's performance
 
 This module contains timing functions for the various scripts in the
 distribution.
+
+See the various programs in this distribution to see what they do
+(and maybe help expand this documentation).
 
 =cut
 

@@ -28,3 +28,4 @@ nytprof.out
 perlbench-*
 /benchres-*
 *.bak
+*.icould

@@ -4,3 +4,4 @@
 *.pm linguist-language=Perl
 
 perlbench-results/** linguist-vendored=true
+benchmarks/**/*.b    linguist-language=Perl

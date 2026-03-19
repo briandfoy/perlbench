@@ -2,3 +2,5 @@
 *.t linguist-language=Perl
 *.pl linguist-language=Perl
 *.pm linguist-language=Perl
+
+perlbench-results/** linguist-vendored=true

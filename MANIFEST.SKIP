@@ -72,3 +72,4 @@
 \.gitattributes\b
 
 .downstream.json
+\.claude/

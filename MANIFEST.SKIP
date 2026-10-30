@@ -71,5 +71,9 @@
 
 \.gitattributes\b
 
-.downstream.json
+^\.downstream\.json
 \.claude/
+^AGENTS\.md
+^CLAUDE\.md
+^\.claude
+^cpan_tester_reports/
